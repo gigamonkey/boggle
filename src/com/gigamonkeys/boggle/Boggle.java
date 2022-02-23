@@ -18,6 +18,7 @@ class Boggle {
 
   private Die[] dice = Die.dice(Die.MODERN);
 
+
   Boggle() {
     loadWords();
   }

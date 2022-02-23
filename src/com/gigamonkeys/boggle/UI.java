@@ -28,6 +28,7 @@ public class UI {
   private int score = 0;
   private long end = 0;
   private boolean gameOver = true;
+  private Set<String> usedWords = new HashSet<String>();
 
   private Set<Point> used = new HashSet<Point>();
   private Point lastPress = null;
@@ -103,6 +104,8 @@ public class UI {
 
   private void newGame() {
     resetDice();
+    usedWords.clear();
+    notAWord.setText("");
     score = 0;
     updateScore();
     end = System.currentTimeMillis() + MILLIS;
@@ -183,7 +186,6 @@ public class UI {
         var b = (JButton)e.getSource();
         var text = b.getText();
         currentWord.append(text);
-        System.out.println("Got " + text + " at " + p);
         lastPress = p;
         used.add(p);
       } else {
@@ -197,8 +199,11 @@ public class UI {
     public void actionPerformed(ActionEvent e) {
       var w = getWord();
       if (w.length() > 0) {
-        if (boggle.isWord(w)) {
+        if (usedWords.contains(w)) {
+          notAWord.setText("“" + w + "” already used.");
+        } else if (boggle.isWord(w)) {
           score += boggle.points(w);
+          usedWords.add(w);
           updateScore();
         } else {
           notAWord.setText("“" + w + "” not in word list.");
