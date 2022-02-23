@@ -4,8 +4,11 @@ import java.awt.Point;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.Timer;
 
 public class UI {
+
+  public static final int MILLIS = 3 * 60 * 1000;
 
   public final static int WIDTH = 400;
   public final static int BUTTON_SIZE = 55;
@@ -17,8 +20,12 @@ public class UI {
   private Boggle boggle;
   private JFrame frame;
   private JButton[] letterButtons;
-  private JLabel scoreboard = null;
+  private JButton submit = new JButton("Submit");
+  private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
+  private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
   private int score = 0;
+  private long end = 0;
+  private boolean gameOver = false;
 
   private Set<Point> used = new HashSet<Point>();
   private Point lastPress = null;
@@ -36,6 +43,7 @@ public class UI {
     addStart();
     addEnter();
     addScoreboard();
+    addClock();
     resetDice();
     frame.repaint();
   }
@@ -65,31 +73,52 @@ public class UI {
   }
 
   private void addEnter() {
-    JButton b = new JButton("Submit");
     int x = X_OFFSET;
     int y = MARGIN + (WITH_GAP * 4) + 2;
     int w = (WITH_GAP * 4);
-    b.setBounds(x, y, w, 30);
-    b.addActionListener(new SubmitListener());
-    frame.add(b);
+    submit.setBounds(x, y, w, 30);
+    submit.addActionListener(new SubmitListener());
+    frame.add(submit);
   }
 
   private void addScoreboard() {
-    scoreboard = new JLabel("0", SwingConstants.RIGHT);
     scoreboard.setBounds(fromRight(50 + MARGIN/2), MARGIN/2, 50, 20);
     frame.add(scoreboard);
+  }
+
+  private void addClock() {
+    clock.setBounds(MARGIN/2, MARGIN/2, 50, 20);
+    frame.add(clock);
   }
 
   private void newGame() {
     resetDice();
     score = 0;
     updateScore();
+    end = System.currentTimeMillis() + MILLIS;
+    updateClock();
+    startTimer();
   }
 
   private void updateScore() {
-    scoreboard.setText("" + score);
+    scoreboard.setText("Score: " + score);
   }
 
+  private void updateClock() {
+    var s = Math.max(0, (end - System.currentTimeMillis()) / 1000);
+    var minutes = s / 60;
+    var seconds = s % 60;
+    clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
+    if (s == 0) {
+      gameOver = true;
+    }
+    submit.setEnabled(!gameOver);
+  }
+
+
+  private void startTimer() {
+    new Timer(1000, new Clock()).start();
+  }
 
   private void resetDice() {
     var labels = boggle.showing();
@@ -173,4 +202,11 @@ public class UI {
       newGame();
     }
   }
+
+  private class Clock implements ActionListener {
+    public void actionPerformed(ActionEvent evt) {
+      updateClock();
+    }
+  };
+
 }
