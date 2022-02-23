@@ -27,7 +27,6 @@ class Boggle {
   }
 
   int points(String word) {
-    System.out.println(word + " gets " + scores[Math.min(word.length(), 8) - 3] + " points.");
     return scores[Math.min(word.length(), 8) - 3];
   }
 

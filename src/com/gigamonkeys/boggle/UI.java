@@ -36,6 +36,7 @@ public class UI {
     addStart();
     addEnter();
     addScoreboard();
+    resetDice();
     frame.repaint();
   }
 
