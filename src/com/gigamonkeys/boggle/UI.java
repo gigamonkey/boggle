@@ -130,7 +130,7 @@ public class UI {
   }
 
   private void resetDice(boolean enable) {
-    var labels = boggle.showing();
+    var labels = boggle.facesShowing();
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels[i]);
       letterButtons[i].setEnabled(enable);

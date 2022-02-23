@@ -10,42 +10,19 @@ class Boggle {
   private final static Random r = new Random();
 
   // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
+
   public final static String[] CLASSIC = {
-    "AACIOT",
-    "ABILTY",
-    "ABJMOQu",
-    "ACDEMP",
-    "ACELRS",
-    "ADENVZ",
-    "AHMORS",
-    "BIFORX",
-    "DENOSW",
-    "DKNOTU",
-    "EEFHIY",
-    "EGKLUY",
-    "EGINTV",
-    "EHINPS",
-    "ELPSTU",
-    "GILRUW",
+    "AACIOT", "ABILTY", "ABJMOQu", "ACDEMP",
+    "ACELRS", "ADENVZ", "AHMORS", "BIFORX",
+    "DENOSW", "DKNOTU", "EEFHIY", "EGKLUY",
+    "EGINTV", "EHINPS", "ELPSTU", "GILRUW",
   };
 
   public final static String[] MODERN = {
-    "AAEEGN",
-    "ABBJOO",
-    "ACHOPS",
-    "AFFKPS",
-    "AOOTTW",
-    "CIMOTU",
-    "DEILRX",
-    "DELRVY",
-    "DISTTY",
-    "EEGHNW",
-    "EEINSU",
-    "EHRTVW",
-    "EIOSST",
-    "ELRTTY",
-    "HIMNUQu",
-    "HLNNRZ",
+    "AAEEGN", "ABBJOO", "ACHOPS", "AFFKPS",
+    "AOOTTW", "CIMOTU", "DEILRX", "DELRVY",
+    "DISTTY", "EEGHNW", "EEINSU", "EHRTVW",
+    "EIOSST", "ELRTTY", "HIMNUQu", "HLNNRZ",
   };
 
   // From https://www.hasbro.com/common/instruct/boggle.pdf
@@ -54,12 +31,7 @@ class Boggle {
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   private static Set<String> words = new HashSet<String>();
 
-  static {
-    loadWords();
-  }
-
   private Die[] dice = Die.dice(MODERN);
-
 
   boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
@@ -69,7 +41,7 @@ class Boggle {
     return scores[Math.min(word.length(), 8) - 3];
   }
 
-  String[] showing() {
+  String[] facesShowing() {
     String[] r = new String[16];
     Die[] dice = shuffledDice();
     for (var i = 0; i < r.length; i++) {
@@ -86,7 +58,7 @@ class Boggle {
     return shuffled;
   }
 
-  private static void loadWords() {
+  static {
     try {
       var resource = Boggle.class.getResourceAsStream("word-list.txt");
       var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
