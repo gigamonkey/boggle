@@ -1,6 +1,7 @@
 package com.gigamonkeys.boggle;
 
 import java.awt.Point;
+import java.awt.Color;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -21,11 +22,12 @@ public class UI {
   private JFrame frame;
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
+  private JLabel notAWord = new JLabel("", SwingConstants.LEFT);
   private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
   private int score = 0;
   private long end = 0;
-  private boolean gameOver = false;
+  private boolean gameOver = true;
 
   private Set<Point> used = new HashSet<Point>();
   private Point lastPress = null;
@@ -41,9 +43,10 @@ public class UI {
     setupFrame();
     addDice();
     addStart();
-    addEnter();
+    addSubmit();
     addScoreboard();
     addClock();
+    addNotAWord();
     resetDice();
     frame.repaint();
   }
@@ -72,12 +75,13 @@ public class UI {
     frame.add(b);
   }
 
-  private void addEnter() {
+  private void addSubmit() {
     int x = X_OFFSET;
     int y = MARGIN + (WITH_GAP * 4) + 2;
     int w = (WITH_GAP * 4);
     submit.setBounds(x, y, w, 30);
     submit.addActionListener(new SubmitListener());
+    submit.setEnabled(!gameOver);
     frame.add(submit);
   }
 
@@ -91,11 +95,18 @@ public class UI {
     frame.add(clock);
   }
 
+  private void addNotAWord() {
+    notAWord.setBounds(MARGIN/2, fromBottom(MARGIN/2 + 20), 150, 20);
+    notAWord.setForeground(Color.red);
+    frame.add(notAWord);
+  }
+
   private void newGame() {
     resetDice();
     score = 0;
     updateScore();
     end = System.currentTimeMillis() + MILLIS;
+    gameOver = false;
     updateClock();
     startTimer();
   }
@@ -190,7 +201,7 @@ public class UI {
           score += boggle.points(w);
           updateScore();
         } else {
-          System.out.println(w + " not in word list.");
+          notAWord.setText("“" + w + "” not in word list.");
         }
         clearWord();
       }
