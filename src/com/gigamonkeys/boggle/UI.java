@@ -125,6 +125,13 @@ public class UI {
   }
 
 
+  private void showMessage(String msg) {
+    message.setText(msg);
+    var t = new Timer(2000, new ClearMessage());
+    t.setRepeats(false);
+    t.start();
+  }
+
   private void startTimer() {
     new Timer(1000, new Clock()).start();
   }
@@ -182,13 +189,6 @@ public class UI {
         game.clearWord();
       }
     }
-  }
-
-  private void showMessage(String msg) {
-    message.setText(msg);
-    var t = new Timer(2000, new ClearMessage());
-    t.setRepeats(false);
-    t.start();
   }
 
   private class NewGameListener implements ActionListener {

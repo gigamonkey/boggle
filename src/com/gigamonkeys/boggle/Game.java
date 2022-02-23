@@ -16,7 +16,7 @@ public class Game {
   Set<String> usedWords = new HashSet<String>();
 
   private Point lastPress = null;
-  private Set<Point> used = new HashSet<Point>();
+  private Set<Point> usedDice = new HashSet<Point>();
   private StringBuilder currentWord = new StringBuilder();
 
   Game(Boggle boggle) {
@@ -52,17 +52,17 @@ public class Game {
   public void addToWord(String letter, Point p) {
     currentWord.append(letter);
     lastPress = p;
-    used.add(p);
+    usedDice.add(p);
   }
 
   public void clearWord() {
     currentWord.delete(0, currentWord.length());
     lastPress = null;
-    used.clear();
+    usedDice.clear();
   }
 
   public boolean legal(Point p) {
-    return !used.contains(p) && (lastPress == null || adjacent(lastPress, p));
+    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
   }
 
   private boolean adjacent(Point p1, Point p2) {
