@@ -52,14 +52,14 @@ class Boggle {
   private static int[] scores = {1, 1, 2, 3, 5, 11};
 
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
-  private Set<String> words = new HashSet<String>();
+  private static Set<String> words = new HashSet<String>();
+
+  static {
+    loadWords();
+  }
 
   private Die[] dice = Die.dice(MODERN);
 
-
-  Boggle() {
-    loadWords();
-  }
 
   boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
@@ -86,9 +86,9 @@ class Boggle {
     return shuffled;
   }
 
-  private void loadWords() {
+  private static void loadWords() {
     try {
-      var resource = getClass().getResourceAsStream("word-list.txt");
+      var resource = Boggle.class.getResourceAsStream("word-list.txt");
       var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
       for (String line = reader.readLine(); line != null; line = reader.readLine()) {
         words.add(line);
