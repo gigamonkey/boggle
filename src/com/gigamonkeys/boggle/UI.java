@@ -17,6 +17,7 @@ public class UI {
   private Boggle boggle;
   private JFrame frame;
   private JButton[] letterButtons;
+  private JLabel scoreboard = null;
   private int score = 0;
 
   private Set<Point> used = new HashSet<Point>();
@@ -34,6 +35,7 @@ public class UI {
     addDice();
     addStart();
     addEnter();
+    addScoreboard();
     frame.repaint();
   }
 
@@ -54,18 +56,6 @@ public class UI {
     }
   }
 
-  private void newGame() {
-    resetDice();
-    score = 0;
-  }
-
-  private void resetDice() {
-    var labels = boggle.showing();
-    for (var i = 0; i < letterButtons.length; i++) {
-      letterButtons[i].setText(labels[i]);
-    }
-  }
-
   private void addStart() {
     JButton b = new JButton("New Game!");
     b.setBounds(fromRight(150 + MARGIN/2), fromBottom(30 + MARGIN/2), 150, 30);
@@ -81,6 +71,30 @@ public class UI {
     b.setBounds(x, y, w, 30);
     b.addActionListener(new SubmitListener());
     frame.add(b);
+  }
+
+  private void addScoreboard() {
+    scoreboard = new JLabel("0", SwingConstants.RIGHT);
+    scoreboard.setBounds(fromRight(50 + MARGIN/2), MARGIN/2, 50, 20);
+    frame.add(scoreboard);
+  }
+
+  private void newGame() {
+    resetDice();
+    score = 0;
+    updateScore();
+  }
+
+  private void updateScore() {
+    scoreboard.setText("" + score);
+  }
+
+
+  private void resetDice() {
+    var labels = boggle.showing();
+    for (var i = 0; i < letterButtons.length; i++) {
+      letterButtons[i].setText(labels[i]);
+    }
   }
 
   private String getWord() {
@@ -144,7 +158,7 @@ public class UI {
       if (w.length() > 0) {
         if (boggle.isWord(w)) {
           score += boggle.points(w);
-          System.out.println("Score: " + score);
+          updateScore();
         } else {
           System.out.println(w + " not in word list.");
         }
