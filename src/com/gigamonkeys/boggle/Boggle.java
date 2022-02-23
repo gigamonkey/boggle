@@ -13,7 +13,6 @@ class Boggle {
 
   private Die[] dice = Die.dice(Die.MODERN);
 
-
   Boggle(/*String wordsFile*/) {
     // Open file and add words to words set.
     //words.add("food");
@@ -21,10 +20,12 @@ class Boggle {
   }
 
   boolean isWord(String word) {
-    return words.contains(word);
+    return word.length() >= 3;
+    //return words.contains(word);
   }
 
   int points(String word) {
+    System.out.println(word + " gets " + scores[Math.min(word.length(), 8) - 3] + " points.");
     return scores[Math.min(word.length(), 8) - 3];
   }
 

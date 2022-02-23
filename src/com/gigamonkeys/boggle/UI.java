@@ -17,7 +17,9 @@ public class UI {
   private Boggle boggle;
   private JFrame frame;
   private JButton[] letterButtons;
+  private int score = 0;
 
+  private Set<Point> used = new HashSet<Point>();
   private Point lastPress = null;
   private StringBuilder currentWord = new StringBuilder();
 
@@ -52,13 +54,17 @@ public class UI {
     }
   }
 
+  private void newGame() {
+    resetDice();
+    score = 0;
+  }
+
   private void resetDice() {
     var labels = boggle.showing();
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels[i]);
     }
   }
-
 
   private void addStart() {
     JButton b = new JButton("New Game!");
@@ -78,9 +84,14 @@ public class UI {
   }
 
   private String getWord() {
-    return currentWord.toString();
+    return currentWord.toString().toLowerCase();
   }
 
+  private void clearWord() {
+    currentWord.delete(0, currentWord.length());
+    lastPress = null;
+    used.clear();
+  }
 
   private JButton newDie(String label, int x, int y) {
     JButton b = new JButton(label);
@@ -96,10 +107,13 @@ public class UI {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
 
+  private boolean legal(Point p) {
+    return !used.contains(p) && (lastPress == null || adjacent(lastPress, p));
+  }
+
   private boolean adjacent(Point p1, Point p2) {
     return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
   }
-
 
   private class LetterPressListener implements ActionListener {
 
@@ -110,14 +124,15 @@ public class UI {
     }
 
     public void actionPerformed(ActionEvent e) {
-      if (lastPress == null || adjacent(lastPress, p)) {
+      if (legal(p)) {
         var b = (JButton)e.getSource();
         var text = b.getText();
         currentWord.append(text);
         System.out.println("Got " + text + " at " + p);
         lastPress = p;
+        used.add(p);
       } else {
-        System.out.println(p + " not adjacent to " + lastPress);
+        System.out.println(p + " already used or not adjacent to " + lastPress);
       }
     }
   }
@@ -125,24 +140,22 @@ public class UI {
 
   private class SubmitListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
-      System.out.println("Current word: " + getWord());
-      currentWord.delete(0, currentWord.length());
+      var w = getWord();
+      if (w.length() > 0) {
+        if (boggle.isWord(w)) {
+          score += boggle.points(w);
+          System.out.println("Score: " + score);
+        } else {
+          System.out.println(w + " not in word list.");
+        }
+        clearWord();
+      }
     }
   }
 
   private class NewGameListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
-      resetDice();
+      newGame();
     }
   }
-
-
-
-
-
-  // Start -- rolls dice, starts timer.
-  // Dice -- 4x4 grid of dice buttons.
-  // Enter -- submit the word typed so far.
-
-
 }
