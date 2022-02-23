@@ -18,6 +18,7 @@ public class UI {
   private JFrame frame;
   private JButton[] letterButtons;
 
+  private Point lastPress = null;
   private StringBuilder currentWord = new StringBuilder();
 
   UI(Boggle boggle) {
@@ -95,6 +96,11 @@ public class UI {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
 
+  private boolean adjacent(Point p1, Point p2) {
+    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
+  }
+
+
   private class LetterPressListener implements ActionListener {
 
     private Point p;
@@ -102,11 +108,17 @@ public class UI {
     LetterPressListener(Point p) {
       this.p = p;
     }
+
     public void actionPerformed(ActionEvent e) {
-      var b = (JButton)e.getSource();
-      var text = b.getText();
-      currentWord.append(text);
-      System.out.println("Got " + text + " at " + p);
+      if (lastPress == null || adjacent(lastPress, p)) {
+        var b = (JButton)e.getSource();
+        var text = b.getText();
+        currentWord.append(text);
+        System.out.println("Got " + text + " at " + p);
+        lastPress = p;
+      } else {
+        System.out.println(p + " not adjacent to " + lastPress);
+      }
     }
   }
 
