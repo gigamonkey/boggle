@@ -9,7 +9,7 @@ import javax.swing.Timer;
 
 public class UI {
 
-  public static final int MILLIS = 3 * 60 * 1000;
+  public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
   public final static int WIDTH = 400;
   public final static int BUTTON_SIZE = 55;
@@ -25,7 +25,7 @@ public class UI {
   private JFrame frame;
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
-  private JLabel notAWord = new JLabel("", SwingConstants.LEFT);
+  private JLabel message = new JLabel("", SwingConstants.LEFT);
   private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
   private long end = 0;
@@ -94,17 +94,17 @@ public class UI {
   }
 
   private void addNotAWord() {
-    notAWord.setBounds(MARGIN/2, fromBottom(MARGIN/2 + 20), 150, 20);
-    notAWord.setForeground(Color.red);
-    frame.add(notAWord);
+    message.setBounds(MARGIN/2, fromBottom(MARGIN/2 + 20), 150, 20);
+    message.setForeground(Color.red);
+    frame.add(message);
   }
 
   void newGame() {
     this.game = new Game(boggle);
     resetDice(true);
-    notAWord.setText("");
+    message.setText("");
     updateScore(0);
-    end = System.currentTimeMillis() + MILLIS;
+    end = System.currentTimeMillis() + GAME_IN_MILLIS;
     updateClock();
     startTimer();
   }
@@ -185,7 +185,7 @@ public class UI {
   }
 
   private void showMessage(String msg) {
-    notAWord.setText(msg);
+    message.setText(msg);
     var t = new Timer(2000, new ClearMessage());
     t.setRepeats(false);
     t.start();
@@ -201,13 +201,12 @@ public class UI {
     public void actionPerformed(ActionEvent evt) {
       updateClock();
     }
-  };
+  }
 
   private class ClearMessage implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
-      notAWord.setText("");
+      message.setText("");
     }
-  };
-
+  }
 
 }
