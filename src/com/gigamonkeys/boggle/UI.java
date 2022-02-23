@@ -19,28 +19,22 @@ public class UI {
   public final static int X_OFFSET = (WIDTH - 4 * WITH_GAP) / 2;
 
   private Boggle boggle;
+  private Game game;
+
+
   private JFrame frame;
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
   private JLabel notAWord = new JLabel("", SwingConstants.LEFT);
   private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
-  private int score = 0;
   private long end = 0;
-  private boolean gameOver = true;
-  private Set<String> usedWords = new HashSet<String>();
-
-  private Set<Point> used = new HashSet<Point>();
-  private Point lastPress = null;
-  private StringBuilder currentWord = new StringBuilder();
 
   UI(Boggle boggle) {
     this.boggle = boggle;
+    this.game = new Game(boggle);
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
-  }
-
-  public void run() {
     setupFrame();
     addDice();
     addStart();
@@ -51,6 +45,8 @@ public class UI {
     resetDice(false);
     frame.repaint();
   }
+
+  public void run() {}
 
   private void setupFrame() {
     frame.setSize(WIDTH, HEIGHT);
@@ -83,7 +79,7 @@ public class UI {
     int w = (WITH_GAP * 4);
     submit.setBounds(x, y, w, 30);
     submit.addActionListener(new SubmitListener());
-    submit.setEnabled(!gameOver);
+    submit.setEnabled(false);
     frame.add(submit);
   }
 
@@ -103,19 +99,17 @@ public class UI {
     frame.add(notAWord);
   }
 
-  private void newGame() {
+  void newGame() {
+    this.game = new Game(boggle);
     resetDice(true);
-    usedWords.clear();
     notAWord.setText("");
-    score = 0;
-    updateScore();
+    updateScore(0);
     end = System.currentTimeMillis() + MILLIS;
-    gameOver = false;
     updateClock();
     startTimer();
   }
 
-  private void updateScore() {
+  private void updateScore(int score) {
     scoreboard.setText("Score: " + score);
   }
 
@@ -125,9 +119,9 @@ public class UI {
     var seconds = s % 60;
     clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
     if (s == 0) {
-      gameOver = true;
+      game.done();
     }
-    submit.setEnabled(!gameOver);
+    submit.setEnabled(!game.over());
   }
 
 
@@ -141,16 +135,6 @@ public class UI {
       letterButtons[i].setText(labels[i]);
       letterButtons[i].setEnabled(enable);
     }
-  }
-
-  private String getWord() {
-    return currentWord.toString().toLowerCase();
-  }
-
-  private void clearWord() {
-    currentWord.delete(0, currentWord.length());
-    lastPress = null;
-    used.clear();
   }
 
   private JButton newDie(String label, int x, int y) {
@@ -167,14 +151,6 @@ public class UI {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
 
-  private boolean legal(Point p) {
-    return !used.contains(p) && (lastPress == null || adjacent(lastPress, p));
-  }
-
-  private boolean adjacent(Point p1, Point p2) {
-    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
-  }
-
   private class LetterPressListener implements ActionListener {
 
     private Point p;
@@ -184,14 +160,9 @@ public class UI {
     }
 
     public void actionPerformed(ActionEvent e) {
-      if (legal(p)) {
+      if (game.legal(p)) {
         var b = (JButton)e.getSource();
-        var text = b.getText();
-        currentWord.append(text);
-        lastPress = p;
-        used.add(p);
-      } else {
-        System.out.println(p + " already used or not adjacent to " + lastPress);
+        game.addToWord(b.getText(), p);
       }
     }
   }
@@ -199,18 +170,16 @@ public class UI {
 
   private class SubmitListener implements ActionListener {
     public void actionPerformed(ActionEvent e) {
-      var w = getWord();
+      var w = game.getWord();
       if (w.length() > 0) {
-        if (usedWords.contains(w)) {
+        if (game.wordUsed(w)) {
           showMessage("“" + w + "” already used.");
         } else if (boggle.isWord(w)) {
-          score += boggle.points(w);
-          usedWords.add(w);
-          updateScore();
+          updateScore(game.scoreWord(w));
         } else {
           showMessage("“" + w + "” not in word list.");
         }
-        clearWord();
+        game.clearWord();
       }
     }
   }
