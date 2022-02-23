@@ -48,7 +48,7 @@ public class UI {
     addScoreboard();
     addClock();
     addNotAWord();
-    resetDice();
+    resetDice(false);
     frame.repaint();
   }
 
@@ -64,6 +64,7 @@ public class UI {
       var y = i / 4;
       var b = newDie("", x, y);
       b.addActionListener(new LetterPressListener(new Point(x, y)));
+      b.setEnabled(false);
       frame.add(b);
       letterButtons[i] = b;
     }
@@ -87,7 +88,7 @@ public class UI {
   }
 
   private void addScoreboard() {
-    scoreboard.setBounds(fromRight(50 + MARGIN/2), MARGIN/2, 50, 20);
+    scoreboard.setBounds(fromRight(100 + MARGIN/2), MARGIN/2, 100, 20);
     frame.add(scoreboard);
   }
 
@@ -103,7 +104,7 @@ public class UI {
   }
 
   private void newGame() {
-    resetDice();
+    resetDice(true);
     usedWords.clear();
     notAWord.setText("");
     score = 0;
@@ -134,10 +135,11 @@ public class UI {
     new Timer(1000, new Clock()).start();
   }
 
-  private void resetDice() {
+  private void resetDice(boolean enable) {
     var labels = boggle.showing();
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels[i]);
+      letterButtons[i].setEnabled(enable);
     }
   }
 
