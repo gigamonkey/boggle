@@ -6,45 +6,6 @@ class Die {
 
   private final static Random r = new Random();
 
-  // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
-  public final static String[] CLASSIC = {
-    "AACIOT",
-    "ABILTY",
-    "ABJMOQu",
-    "ACDEMP",
-    "ACELRS",
-    "ADENVZ",
-    "AHMORS",
-    "BIFORX",
-    "DENOSW",
-    "DKNOTU",
-    "EEFHIY",
-    "EGKLUY",
-    "EGINTV",
-    "EHINPS",
-    "ELPSTU",
-    "GILRUW",
-  };
-
-  public final static String[] MODERN = {
-    "AAEEGN",
-    "ABBJOO",
-    "ACHOPS",
-    "AFFKPS",
-    "AOOTTW",
-    "CIMOTU",
-    "DEILRX",
-    "DELRVY",
-    "DISTTY",
-    "EEGHNW",
-    "EEINSU",
-    "EHRTVW",
-    "EIOSST",
-    "ELRTTY",
-    "HIMNUQu",
-    "HLNNRZ",
-  };
-
   private final String[] faces;
 
   static Die[] dice(String[] set) {

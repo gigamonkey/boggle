@@ -9,6 +9,44 @@ class Boggle {
 
   private final static Random r = new Random();
 
+  // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
+  public final static String[] CLASSIC = {
+    "AACIOT",
+    "ABILTY",
+    "ABJMOQu",
+    "ACDEMP",
+    "ACELRS",
+    "ADENVZ",
+    "AHMORS",
+    "BIFORX",
+    "DENOSW",
+    "DKNOTU",
+    "EEFHIY",
+    "EGKLUY",
+    "EGINTV",
+    "EHINPS",
+    "ELPSTU",
+    "GILRUW",
+  };
+
+  public final static String[] MODERN = {
+    "AAEEGN",
+    "ABBJOO",
+    "ACHOPS",
+    "AFFKPS",
+    "AOOTTW",
+    "CIMOTU",
+    "DEILRX",
+    "DELRVY",
+    "DISTTY",
+    "EEGHNW",
+    "EEINSU",
+    "EHRTVW",
+    "EIOSST",
+    "ELRTTY",
+    "HIMNUQu",
+    "HLNNRZ",
+  };
 
   // From https://www.hasbro.com/common/instruct/boggle.pdf
   private static int[] scores = {1, 1, 2, 3, 5, 11};
@@ -16,7 +54,7 @@ class Boggle {
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   private Set<String> words = new HashSet<String>();
 
-  private Die[] dice = Die.dice(Die.MODERN);
+  private Die[] dice = Die.dice(MODERN);
 
 
   Boggle() {
