@@ -18,7 +18,7 @@ public class UI {
   private JFrame frame;
   private JButton[] letterButtons;
 
-  private StringBuffer currentWord = new StringBuffer();
+  private StringBuilder currentWord = new StringBuilder();
 
   UI(Boggle boggle) {
     this.boggle = boggle;
@@ -72,6 +72,7 @@ public class UI {
     int y = MARGIN + (WITH_GAP * 4) + 2;
     int w = (WITH_GAP * 4);
     b.setBounds(x, y, w, 30);
+    b.addActionListener(new SubmitListener());
     frame.add(b);
   }
 
@@ -94,12 +95,6 @@ public class UI {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
 
-  private class NewGameListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      resetDice();
-    }
-  }
-
   private class LetterPressListener implements ActionListener {
 
     private Point p;
@@ -111,10 +106,23 @@ public class UI {
       var b = (JButton)e.getSource();
       var text = b.getText();
       currentWord.append(text);
-      System.out.println("Current word: " + getWord());
+      System.out.println("Got " + text + " at " + p);
     }
   }
 
+
+  private class SubmitListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      System.out.println("Current word: " + getWord());
+      currentWord.delete(0, currentWord.length());
+    }
+  }
+
+  private class NewGameListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      resetDice();
+    }
+  }
 
 
 
