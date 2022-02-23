@@ -46,7 +46,6 @@ class Die {
   };
 
   private final String[] faces;
-  private int face = 0;
 
   static Die[] dice(String[] set) {
     var dice = new Die[set.length];
@@ -60,12 +59,8 @@ class Die {
     this.faces = faces.split("", 6);
   }
 
-  void roll() {
-    face = r.nextInt(faces.length);
-  }
-
-  String face() {
-    return faces[face];
+  String roll() {
+    return faces[r.nextInt(faces.length)];
   }
 
   public String toString() {

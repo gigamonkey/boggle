@@ -28,19 +28,13 @@ class Boggle {
     return scores[Math.min(word.length(), 8) - 3];
   }
 
-  Die[][] randomGrid() {
-    final int size = (int)Math.sqrt(dice.length);
-    final Die[] shuffled = shuffledDice();
-
-    Die[][] grid = new Die[size][size];
-    for (var i = 0; i < grid.length; i++) {
-      for (var j = 0; j < grid[i].length; j++) {
-        grid[i][j] = shuffled[i * 4 + j];
-        System.out.println(grid[i][j]);
-      }
-      System.out.println();
+  String[] showing() {
+    String[] r = new String[16];
+    Die[] dice = shuffledDice();
+    for (var i = 0; i < r.length; i++) {
+      r[i] = dice[i].roll();
     }
-    return grid;
+    return r;
   }
 
   private Die[] shuffledDice() {

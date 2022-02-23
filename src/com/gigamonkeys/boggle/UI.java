@@ -1,6 +1,8 @@
 package com.gigamonkeys.boggle;
 
+import java.awt.Point;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
 public class UI {
@@ -12,12 +14,14 @@ public class UI {
   public final static int MARGIN = 20;
   public final static int X_OFFSET = (WIDTH - 4 * WITH_GAP) / 2;
 
-  private Die[][] grid;
+  private Boggle boggle;
   private JFrame frame;
   private JButton[] letterButtons;
 
-  UI(Die[][] grid) {
-    this.grid = grid;
+  private StringBuffer currentWord = new StringBuffer();
+
+  UI(Boggle boggle) {
+    this.boggle = boggle;
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
   }
@@ -28,9 +32,6 @@ public class UI {
     addStart();
     addEnter();
     frame.repaint();
-    System.out.println("frame: " + frame.getSize());
-    System.out.println("rootPane:" + frame.getRootPane().getSize());
-
   }
 
   private void setupFrame() {
@@ -40,23 +41,28 @@ public class UI {
   }
 
   private void addDice() {
-    for (var i = 0; i < grid.length; i++) {
-      for (var j = 0; j < grid[i].length; j++) {
-        var b = newDie(grid[i][j].face(), i, j);
-        frame.add(b);
-        letterButtons[i * 4 + j] = b;
-      }
+    for (var i = 0; i < 16; i++) {
+      var x = i % 4;
+      var y = i / 4;
+      var b = newDie("", x, y);
+      b.addActionListener(new LetterPressListener(new Point(x, y)));
+      frame.add(b);
+      letterButtons[i] = b;
     }
   }
+
+  private void resetDice() {
+    var labels = boggle.showing();
+    for (var i = 0; i < letterButtons.length; i++) {
+      letterButtons[i].setText(labels[i]);
+    }
+  }
+
 
   private void addStart() {
     JButton b = new JButton("New Game!");
     b.setBounds(fromRight(150 + MARGIN/2), fromBottom(30 + MARGIN/2), 150, 30);
-    b.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          System.out.println("Here");
-        }
-      });
+    b.addActionListener(new NewGameListener());
     frame.add(b);
   }
 
@@ -67,7 +73,10 @@ public class UI {
     int w = (WITH_GAP * 4);
     b.setBounds(x, y, w, 30);
     frame.add(b);
+  }
 
+  private String getWord() {
+    return currentWord.toString();
   }
 
 
@@ -84,6 +93,31 @@ public class UI {
   private int fromRight(int p) {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
+
+  private class NewGameListener implements ActionListener {
+    public void actionPerformed(ActionEvent e) {
+      resetDice();
+    }
+  }
+
+  private class LetterPressListener implements ActionListener {
+
+    private Point p;
+
+    LetterPressListener(Point p) {
+      this.p = p;
+    }
+    public void actionPerformed(ActionEvent e) {
+      var b = (JButton)e.getSource();
+      var text = b.getText();
+      currentWord.append(text);
+      System.out.println("Current word: " + getWord());
+    }
+  }
+
+
+
+
 
 
   // Start -- rolls dice, starts timer.
