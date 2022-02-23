@@ -51,8 +51,8 @@ class Boggle {
   private void loadWords() {
     try {
       var resource = getClass().getResourceAsStream("word-list.txt");
-      var lines = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8)).lines().toList();
-      for (String line : lines) {
+      var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
+      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
         words.add(line);
       }
       System.out.println(words.size() + " words loaded.");
