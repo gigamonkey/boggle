@@ -7,20 +7,27 @@ public class UI {
   public final static int BUTTON_SIZE = 55;
   public final static int WITH_GAP = BUTTON_SIZE + 5;
 
+  private Die[][] grid;
+
+  UI(Die[][] grid) {
+    this.grid = grid;
+  }
+
+
   public void run() {
     JFrame f = new JFrame("Boggle");
-    var b = newDie("A");
-    f.add(b);// adding button in JFrame
+
+    addDice(f, grid);
 
     f.setSize(400, 500);// 400 width and 500 height
     f.setLayout(null);// using no layout managers
     f.setVisible(true);// making the frame visible
   }
 
-  void addDice(Die[][] grid) {
+  void addDice(JFrame f, Die[][] grid) {
     for (var i = 0; i < grid.length; i++) {
-      for (var j = 0; j < grid[j].length; j++) {
-        newButton(i, j);
+      for (var j = 0; j < grid[i].length; j++) {
+        f.add(newDie(grid[i][j].face(), i, j));
       }
     }
   }
