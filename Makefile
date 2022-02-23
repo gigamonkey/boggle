@@ -1,4 +1,6 @@
-all:
+all: compile run
+
+compile:
 	javac -cp src:classes -d classes/ src/com/gigamonkeys/boggle/Main.java
 
 run:
