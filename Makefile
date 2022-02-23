@@ -1,4 +1,4 @@
-resources := classes/com/gigamonkey/boggle/word-list.txt
+resources := classes/com/gigamonkeys/boggle/word-list.txt
 
 
 all: build run
@@ -20,6 +20,6 @@ clean:
 	rm -rf classes
 
 
-classes/com/gigamonkey/boggle/%.txt: %.txt
+classes/com/gigamonkeys/boggle/%.txt: %.txt
 	mkdir -p $(dir $@)
 	cp $< $@

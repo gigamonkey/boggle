@@ -200,17 +200,24 @@ public class UI {
       var w = getWord();
       if (w.length() > 0) {
         if (usedWords.contains(w)) {
-          notAWord.setText("“" + w + "” already used.");
+          showMessage("“" + w + "” already used.");
         } else if (boggle.isWord(w)) {
           score += boggle.points(w);
           usedWords.add(w);
           updateScore();
         } else {
-          notAWord.setText("“" + w + "” not in word list.");
+          showMessage("“" + w + "” not in word list.");
         }
         clearWord();
       }
     }
+  }
+
+  private void showMessage(String msg) {
+    notAWord.setText(msg);
+    var t = new Timer(2000, new ClearMessage());
+    t.setRepeats(false);
+    t.start();
   }
 
   private class NewGameListener implements ActionListener {
@@ -224,5 +231,12 @@ public class UI {
       updateClock();
     }
   };
+
+  private class ClearMessage implements ActionListener {
+    public void actionPerformed(ActionEvent evt) {
+      notAWord.setText("");
+    }
+  };
+
 
 }
