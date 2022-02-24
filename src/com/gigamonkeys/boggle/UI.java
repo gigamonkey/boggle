@@ -139,9 +139,9 @@ public class UI {
   }
 
   private void resetDice(boolean enable) {
-    var labels = boggle.facesShowing();
+    var labels = boggle.faces();
     for (var i = 0; i < letterButtons.length; i++) {
-      letterButtons[i].setText(labels[i]);
+      letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);
     }
   }

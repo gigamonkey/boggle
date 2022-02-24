@@ -28,27 +28,12 @@ class Boggle {
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   private static Set<String> words = new HashSet<String>();
 
-  private Die[] dice = Die.dice(MODERN);
-
   boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
   }
 
-  String[] facesShowing() {
-    String[] r = new String[16];
-    Die[] dice = shuffledDice();
-    for (var i = 0; i < r.length; i++) {
-      r[i] = dice[i].roll();
-    }
-    return r;
-  }
-
-  private Die[] shuffledDice() {
-    List<Die> list = Arrays.asList(dice);
-    Collections.shuffle(list);
-    Die[] shuffled = new Die[dice.length];
-    list.toArray(shuffled);
-    return shuffled;
+  List<String> faces() {
+    return Arrays.asList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
   }
 
   static {
