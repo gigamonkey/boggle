@@ -18,7 +18,7 @@ public class UI {
   public final static int MARGIN = 20;
   public final static int X_OFFSET = (WIDTH - 4 * WITH_GAP) / 2;
 
-  private Game game;
+  private Boggle game;
 
   private JFrame frame;
   private JButton[] letterButtons;
@@ -29,7 +29,7 @@ public class UI {
   private long end = 0;
 
   UI() {
-    this.game = new Game();
+    this.game = new Boggle();
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
     setupFrame();
@@ -101,7 +101,7 @@ public class UI {
   }
 
   void newGame() {
-    game = new Game();
+    game = new Boggle();
     resetDice(true);
     message.setText("");
     updateScore(0);
