@@ -39,7 +39,7 @@ class Boggle {
       var resource = Boggle.class.getResourceAsStream("word-list.txt");
       var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
       for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        words.add(line);
+        words.add(line.toLowerCase());
       }
       System.out.println(words.size() + " words loaded.");
     } catch (Exception e) {
@@ -48,74 +48,70 @@ class Boggle {
     }
   }
 
-  boolean isWord(String word) {
-    return word.length() >= 3 && words.contains(word);
-  }
+  private int score = 0;
+  private boolean gameOver = false;
+  private Set<String> usedWords = new HashSet<String>();
+  private Set<Point> usedDice = new HashSet<Point>();
+  private Point lastPress = null;
+  private StringBuilder currentWord = new StringBuilder();
 
   List<String> faces() {
     return Arrays.asList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
   }
 
+  boolean isWord(String word) {
+    return word.length() >= 3 && words.contains(word);
+  }
 
-  private int score = 0;
-  private boolean gameOver = false;
-  Set<String> usedWords = new HashSet<String>();
-
-  private Point lastPress = null;
-  private Set<Point> usedDice = new HashSet<Point>();
-  private StringBuilder currentWord = new StringBuilder();
-
-  public int getScore() {
+  int getScore() {
     return score;
   }
 
-  public boolean wordUsed(String w) {
+  boolean wordUsed(String w) {
     return usedWords.contains(w);
   }
 
-  public int scoreWord(String w) {
+  int scoreWord(String w) {
     score += points(w);
     usedWords.add(w);
     return score;
   }
 
-  public int points(String word) {
+  int points(String word) {
     return scores[Math.min(word.length(), 8) - 3];
   }
 
-  public void done() {
+  void done() {
     gameOver = true;
   }
 
-  public boolean over() {
+  boolean over() {
     return gameOver;
   }
 
-  public String getWord() {
+  String getWord() {
     return currentWord.toString().toLowerCase();
   }
 
-  public void addToWord(String letter, Point p) {
+  boolean legal(Point p) {
+    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
+  }
+
+  void addToWord(String letter, Point p) {
     currentWord.append(letter);
     lastPress = p;
     usedDice.add(p);
   }
 
-  public void clearWord() {
+  void clearWord() {
     currentWord.delete(0, currentWord.length());
     lastPress = null;
     usedDice.clear();
   }
 
-  public boolean legal(Point p) {
-    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
-  }
-
-  private boolean adjacent(Point p1, Point p2) {
+  boolean adjacent(Point p1, Point p2) {
     return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
   }
 
-  public static void main(String[] args) {
-    new UI();
-  }
+  public static void main(String[] args) { new UI(); }
 }
