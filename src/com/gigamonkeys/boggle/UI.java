@@ -119,7 +119,8 @@ public class UI {
     }
   }
 
-  private void showMessage(String msg) {
+  private void showMessage(String msg, Color color) {
+    message.setForeground(color);
     message.setText(msg);
     var t = new Timer(2000, e -> message.setText(""));
     t.setRepeats(false);
@@ -153,11 +154,12 @@ public class UI {
     var w = game.getWord();
     if (w.length() > 0) {
       if (game.wordUsed(w)) {
-        showMessage("“" + w + "” already used.");
+        showMessage("“" + w + "” already used.", Color.red);
       } else if (game.isWord(w)) {
+        showMessage("“" + w + "” is good!", Color.blue);
         updateScore(game.scoreWord(w));
       } else {
-        showMessage("“" + w + "” not in word list.");
+        showMessage("“" + w + "” not in word list.", Color.red);
       }
       game.clearWord();
     }
