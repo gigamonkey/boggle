@@ -56,7 +56,12 @@ class Boggle {
   private StringBuilder currentWord = new StringBuilder();
 
   List<String> faces() {
-    return Arrays.asList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
+    return shuffled(Arrays.asList(MODERN)).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
+  }
+
+  List<String> shuffled(List<String> items) {
+    Collections.shuffle(items);
+    return items;
   }
 
 
