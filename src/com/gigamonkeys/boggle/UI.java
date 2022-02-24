@@ -21,7 +21,6 @@ public class UI {
   private Boggle boggle;
   private Game game;
 
-
   private JFrame frame;
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
@@ -46,12 +45,11 @@ public class UI {
     frame.repaint();
   }
 
-  public void run() {}
-
   private void setupFrame() {
     frame.setSize(WIDTH, HEIGHT);
     frame.setLayout(null);
     frame.setVisible(true);
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
   private void addDice() {
@@ -124,7 +122,6 @@ public class UI {
     submit.setEnabled(!game.over());
   }
 
-
   private void showMessage(String msg) {
     message.setText(msg);
     var t = new Timer(2000, new ClearMessage());
@@ -157,6 +154,10 @@ public class UI {
   private int fromRight(int p) {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
+
+  //
+  // Action Listeners
+  //
 
   private class LetterPressListener implements ActionListener {
 
@@ -208,5 +209,4 @@ public class UI {
       message.setText("");
     }
   }
-
 }

@@ -2,6 +2,6 @@ package com.gigamonkeys.boggle;
 
 class Main {
   public static void main(String[] args) {
-    new UI(new Boggle()).run();
+    new UI(new Boggle());
   }
 }
