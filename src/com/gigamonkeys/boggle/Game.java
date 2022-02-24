@@ -1,8 +1,10 @@
 package com.gigamonkeys.boggle;
 
-import java.awt.Point;
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -13,8 +15,51 @@ import javax.swing.Timer;
  */
 public class Game {
 
+  private final static Random r = new Random();
+
   // From https://www.hasbro.com/common/instruct/boggle.pdf
-  private static int[] scores = {1, 1, 2, 3, 5, 11};
+  private final static int[] scores = {1, 1, 2, 3, 5, 11};
+
+  // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
+
+  private final static String[] CLASSIC = {
+    "AACIOT", "ABILTY", "ABJMOQu", "ACDEMP",
+    "ACELRS", "ADENVZ", "AHMORS", "BIFORX",
+    "DENOSW", "DKNOTU", "EEFHIY", "EGKLUY",
+    "EGINTV", "EHINPS", "ELPSTU", "GILRUW",
+  };
+
+  public final static String[] MODERN = {
+    "AAEEGN", "ABBJOO", "ACHOPS", "AFFKPS",
+    "AOOTTW", "CIMOTU", "DEILRX", "DELRVY",
+    "DISTTY", "EEGHNW", "EEINSU", "EHRTVW",
+    "EIOSST", "ELRTTY", "HIMNUQu", "HLNNRZ",
+  };
+
+  // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
+  private final static Set<String> words = new HashSet<String>();
+  static {
+    try {
+      var resource = Boggle.class.getResourceAsStream("word-list.txt");
+      var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
+      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+        words.add(line);
+      }
+      System.out.println(words.size() + " words loaded.");
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(1);
+    }
+  }
+
+  boolean isWord(String word) {
+    return word.length() >= 3 && words.contains(word);
+  }
+
+  List<String> faces() {
+    return Arrays.asList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
+  }
+
 
   private int score = 0;
   private boolean gameOver = false;

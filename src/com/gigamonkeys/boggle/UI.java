@@ -18,7 +18,6 @@ public class UI {
   public final static int MARGIN = 20;
   public final static int X_OFFSET = (WIDTH - 4 * WITH_GAP) / 2;
 
-  private Boggle boggle;
   private Game game;
 
   private JFrame frame;
@@ -29,8 +28,7 @@ public class UI {
   private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
   private long end = 0;
 
-  UI(Boggle boggle) {
-    this.boggle = boggle;
+  UI() {
     this.game = new Game();
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
@@ -139,7 +137,7 @@ public class UI {
   }
 
   private void resetDice(boolean enable) {
-    var labels = boggle.faces();
+    var labels = game.faces();
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);
@@ -157,7 +155,7 @@ public class UI {
     if (w.length() > 0) {
       if (game.wordUsed(w)) {
         showMessage("“" + w + "” already used.");
-      } else if (boggle.isWord(w)) {
+      } else if (game.isWord(w)) {
         updateScore(game.scoreWord(w));
       } else {
         showMessage("“" + w + "” not in word list.");
