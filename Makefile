@@ -16,7 +16,7 @@ resources: $(resources)
 
 
 run:
-	java -cp classes com.gigamonkeys.boggle.Main
+	java -cp classes com.gigamonkeys.boggle.Boggle
 
 
 clean:

@@ -1,6 +1,6 @@
 package com.gigamonkeys.boggle;
 
-class Main {
+class Boggle {
   public static void main(String[] args) {
     new UI();
   }
