@@ -7,9 +7,14 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
+/*
+ * Keep the state for one game. A new Game object is created for each
+ * game so we don't have to reset any of this state.
+ */
 public class Game {
 
-  private Boggle boggle;
+  // From https://www.hasbro.com/common/instruct/boggle.pdf
+  private static int[] scores = {1, 1, 2, 3, 5, 11};
 
   private int score = 0;
   private boolean gameOver = false;
@@ -18,10 +23,6 @@ public class Game {
   private Point lastPress = null;
   private Set<Point> usedDice = new HashSet<Point>();
   private StringBuilder currentWord = new StringBuilder();
-
-  Game(Boggle boggle) {
-    this.boggle = boggle;
-  }
 
   public int getScore() {
     return score;
@@ -32,9 +33,13 @@ public class Game {
   }
 
   public int scoreWord(String w) {
-    score += boggle.points(w);
+    score += points(w);
     usedWords.add(w);
     return score;
+  }
+
+  public int points(String word) {
+    return scores[Math.min(word.length(), 8) - 3];
   }
 
   public void done() {

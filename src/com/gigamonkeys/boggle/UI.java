@@ -31,7 +31,7 @@ public class UI {
 
   UI(Boggle boggle) {
     this.boggle = boggle;
-    this.game = new Game(boggle);
+    this.game = new Game();
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
     setupFrame();
@@ -103,7 +103,7 @@ public class UI {
   }
 
   void newGame() {
-    this.game = new Game(boggle);
+    game = new Game();
     resetDice(true);
     message.setText("");
     updateScore(0);

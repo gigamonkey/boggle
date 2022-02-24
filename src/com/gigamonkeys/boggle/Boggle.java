@@ -25,9 +25,6 @@ class Boggle {
     "EIOSST", "ELRTTY", "HIMNUQu", "HLNNRZ",
   };
 
-  // From https://www.hasbro.com/common/instruct/boggle.pdf
-  private static int[] scores = {1, 1, 2, 3, 5, 11};
-
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   private static Set<String> words = new HashSet<String>();
 
@@ -35,10 +32,6 @@ class Boggle {
 
   boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
-  }
-
-  int points(String word) {
-    return scores[Math.min(word.length(), 8) - 3];
   }
 
   String[] facesShowing() {
