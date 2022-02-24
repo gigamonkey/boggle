@@ -1,5 +1,6 @@
 package com.gigamonkeys.boggle;
 
+import java.awt.*;
 import java.awt.Point;
 import java.awt.Color;
 import java.awt.event.*;
@@ -51,18 +52,22 @@ public class UI {
   }
 
   private void addDice() {
+
+    JPanel panel = new JPanel(new GridLayout(4,4));
+    panel.setBounds(X_OFFSET, MARGIN, 4 * WITH_GAP, 4 * WITH_GAP);
+
     for (var i = 0; i < 16; i++) {
       var x = i % 4;
       var y = i / 4;
 
       final var p = new Point(x, y);
       final var b = new JButton("");
-      b.setBounds(X_OFFSET + (x * WITH_GAP), MARGIN + y * WITH_GAP, BUTTON_SIZE, BUTTON_SIZE);
       b.addActionListener(e -> dieClicked(p, b.getText()));
       b.setEnabled(false);
-      frame.add(b);
+      panel.add(b);
       letterButtons[i] = b;
     }
+    frame.add(panel);
   }
 
   private void addStart() {
