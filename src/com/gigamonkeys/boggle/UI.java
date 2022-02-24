@@ -57,7 +57,12 @@ public class UI {
       var x = i % 4;
       var y = i / 4;
       var b = newDie("", x, y);
-      b.addActionListener(new LetterPressListener(new Point(x, y)));
+      final Point p = new Point(x, y);
+      b.addActionListener(e -> {
+          if (game.legal(p)) {
+            game.addToWord(b.getText(), p);
+          }
+        });
       b.setEnabled(false);
       frame.add(b);
       letterButtons[i] = b;
@@ -67,7 +72,7 @@ public class UI {
   private void addStart() {
     JButton b = new JButton("New Game!");
     b.setBounds(fromRight(150 + MARGIN/2), fromBottom(30 + MARGIN/2), 150, 30);
-    b.addActionListener(new NewGameListener());
+    b.addActionListener(e -> newGame());
     frame.add(b);
   }
 
@@ -76,7 +81,7 @@ public class UI {
     int y = MARGIN + (WITH_GAP * 4) + 2;
     int w = (WITH_GAP * 4);
     submit.setBounds(x, y, w, 30);
-    submit.addActionListener(new SubmitListener());
+    submit.addActionListener(e -> submitWord());
     submit.setEnabled(false);
     frame.add(submit);
   }
@@ -124,13 +129,13 @@ public class UI {
 
   private void showMessage(String msg) {
     message.setText(msg);
-    var t = new Timer(2000, new ClearMessage());
+    var t = new Timer(2000, e -> message.setText(""));
     t.setRepeats(false);
     t.start();
   }
 
   private void startTimer() {
-    new Timer(1000, new Clock()).start();
+    new Timer(1000, e -> updateClock()).start();
   }
 
   private void resetDice(boolean enable) {
@@ -147,6 +152,20 @@ public class UI {
     return b;
   }
 
+  void submitWord() {
+    var w = game.getWord();
+    if (w.length() > 0) {
+      if (game.wordUsed(w)) {
+        showMessage("“" + w + "” already used.");
+      } else if (boggle.isWord(w)) {
+        updateScore(game.scoreWord(w));
+      } else {
+        showMessage("“" + w + "” not in word list.");
+      }
+      game.clearWord();
+    }
+  }
+
   private int fromBottom(int p) {
     return (int)(frame.getRootPane().getSize().getHeight() - p);
   }
@@ -155,58 +174,4 @@ public class UI {
     return (int)(frame.getRootPane().getSize().getWidth() - p);
   }
 
-  //
-  // Action Listeners
-  //
-
-  private class LetterPressListener implements ActionListener {
-
-    private Point p;
-
-    LetterPressListener(Point p) {
-      this.p = p;
-    }
-
-    public void actionPerformed(ActionEvent e) {
-      if (game.legal(p)) {
-        var b = (JButton)e.getSource();
-        game.addToWord(b.getText(), p);
-      }
-    }
-  }
-
-
-  private class SubmitListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      var w = game.getWord();
-      if (w.length() > 0) {
-        if (game.wordUsed(w)) {
-          showMessage("“" + w + "” already used.");
-        } else if (boggle.isWord(w)) {
-          updateScore(game.scoreWord(w));
-        } else {
-          showMessage("“" + w + "” not in word list.");
-        }
-        game.clearWord();
-      }
-    }
-  }
-
-  private class NewGameListener implements ActionListener {
-    public void actionPerformed(ActionEvent e) {
-      newGame();
-    }
-  }
-
-  private class Clock implements ActionListener {
-    public void actionPerformed(ActionEvent evt) {
-      updateClock();
-    }
-  }
-
-  private class ClearMessage implements ActionListener {
-    public void actionPerformed(ActionEvent evt) {
-      message.setText("");
-    }
-  }
 }
