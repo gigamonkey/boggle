@@ -59,12 +59,38 @@ class Boggle {
     return Arrays.asList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
   }
 
-  boolean isWord(String word) {
-    return word.length() >= 3 && words.contains(word);
+
+  //
+  // Word management
+  //
+
+  boolean legal(Point p) {
+    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
   }
 
-  int getScore() {
-    return score;
+  boolean adjacent(Point p1, Point p2) {
+    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
+  }
+
+  void addToWord(String letter, Point p) {
+    assert legal(p);
+    currentWord.append(letter);
+    lastPress = p;
+    usedDice.add(p);
+  }
+
+  String getWord() {
+    return currentWord.toString().toLowerCase();
+  }
+
+  void clearWord() {
+    currentWord.delete(0, currentWord.length());
+    lastPress = null;
+    usedDice.clear();
+  }
+
+  boolean isWord(String word) {
+    return word.length() >= 3 && words.contains(word);
   }
 
   boolean wordUsed(String w) {
@@ -81,36 +107,16 @@ class Boggle {
     return scores[Math.min(word.length(), 8) - 3];
   }
 
+  int getScore() {
+    return score;
+  }
+
   void done() {
     gameOver = true;
   }
 
   boolean over() {
     return gameOver;
-  }
-
-  String getWord() {
-    return currentWord.toString().toLowerCase();
-  }
-
-  boolean legal(Point p) {
-    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
-  }
-
-  void addToWord(String letter, Point p) {
-    currentWord.append(letter);
-    lastPress = p;
-    usedDice.add(p);
-  }
-
-  void clearWord() {
-    currentWord.delete(0, currentWord.length());
-    lastPress = null;
-    usedDice.clear();
-  }
-
-  boolean adjacent(Point p1, Point p2) {
-    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
   }
 
   public static void main(String[] args) { new UI(); }

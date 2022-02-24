@@ -38,7 +38,7 @@ public class UI {
     addSubmit();
     addScoreboard();
     addClock();
-    addNotAWord();
+    addMessage();
     resetDice(false);
     frame.repaint();
   }
@@ -54,13 +54,11 @@ public class UI {
     for (var i = 0; i < 16; i++) {
       var x = i % 4;
       var y = i / 4;
-      var b = newDie("", x, y);
-      final Point p = new Point(x, y);
-      b.addActionListener(e -> {
-          if (game.legal(p)) {
-            game.addToWord(b.getText(), p);
-          }
-        });
+
+      final var p = new Point(x, y);
+      final var b = new JButton("");
+      b.setBounds(X_OFFSET + (x * WITH_GAP), MARGIN + y * WITH_GAP, BUTTON_SIZE, BUTTON_SIZE);
+      b.addActionListener(e -> dieClicked(p, b.getText()));
       b.setEnabled(false);
       frame.add(b);
       letterButtons[i] = b;
@@ -94,10 +92,15 @@ public class UI {
     frame.add(clock);
   }
 
-  private void addNotAWord() {
+  private void addMessage() {
     message.setBounds(MARGIN/2, fromBottom(MARGIN/2 + 20), 150, 20);
     message.setForeground(Color.red);
     frame.add(message);
+  }
+
+
+  private void updateScore(int score) {
+    scoreboard.setText("Score: " + score);
   }
 
   void newGame() {
@@ -110,19 +113,10 @@ public class UI {
     startTimer();
   }
 
-  private void updateScore(int score) {
-    scoreboard.setText("Score: " + score);
-  }
-
-  private void updateClock() {
-    var s = Math.max(0, (end - System.currentTimeMillis()) / 1000);
-    var minutes = s / 60;
-    var seconds = s % 60;
-    clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
-    if (s == 0) {
-      game.done();
+  private void dieClicked(Point p, String text) {
+    if (game.legal(p)) {
+      game.addToWord(text, p);
     }
-    submit.setEnabled(!game.over());
   }
 
   private void showMessage(String msg) {
@@ -136,18 +130,23 @@ public class UI {
     new Timer(1000, e -> updateClock()).start();
   }
 
+  private void updateClock() {
+    var s = Math.max(0, (end - System.currentTimeMillis()) / 1000);
+    var minutes = s / 60;
+    var seconds = s % 60;
+    clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
+    if (s == 0) {
+      game.done();
+    }
+    submit.setEnabled(!game.over());
+  }
+
   private void resetDice(boolean enable) {
     var labels = game.faces();
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);
     }
-  }
-
-  private JButton newDie(String label, int x, int y) {
-    JButton b = new JButton(label);
-    b.setBounds(X_OFFSET + (x * WITH_GAP), MARGIN + y * WITH_GAP, BUTTON_SIZE, BUTTON_SIZE);
-    return b;
   }
 
   void submitWord() {
