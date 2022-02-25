@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 import javax.swing.*;
 import javax.swing.Timer;
 
@@ -34,19 +35,12 @@ class Boggle {
   };
 
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
-  private final static Set<String> words = new HashSet<String>();
+  private final static Set<String> words;
   static {
-    try {
-      var resource = Boggle.class.getResourceAsStream("word-list.txt");
-      var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
-      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        words.add(line.toLowerCase());
-      }
-      System.out.println(words.size() + " words loaded.");
-    } catch (Exception e) {
-      e.printStackTrace();
-      System.exit(1);
-    }
+    var resource = Boggle.class.getResourceAsStream("word-list.txt");
+    var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
+    words = reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
+    System.out.println(words.size() + " words loaded.");
   }
 
   private int score = 0;
