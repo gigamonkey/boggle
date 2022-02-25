@@ -18,7 +18,6 @@ public class UI {
   public final static int BUTTONS_SIZE = 235;
   public final static int MARGIN = 20;
   public final static int HEIGHT = BUTTONS_SIZE + 150;
-  public final static int X_OFFSET = (WIDTH - BUTTONS_SIZE) / 2;
 
   private Boggle game;
 
