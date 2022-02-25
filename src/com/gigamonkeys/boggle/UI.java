@@ -21,7 +21,6 @@ public class UI {
 
   private Boggle game;
 
-  private JFrame frame;
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
   private JLabel message = new JLabel("", SwingConstants.LEFT);
@@ -32,20 +31,20 @@ public class UI {
   UI() {
     this.game = new Boggle();
     this.letterButtons = new JButton[16];
-    this.frame = new JFrame("Boggle");
-    setupFrame();
-    mainLayout();
+    makeFrame();
+  }
+
+  private void makeFrame() {
+    JFrame frame = new JFrame("Boggle");
+    frame.setSize(WIDTH, HEIGHT);
+    frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    addComponents(frame);
     resetDice(false);
     frame.setVisible(true);
   }
 
-  private void setupFrame() {
-    frame.setSize(WIDTH, HEIGHT);
-    frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-  }
-
-  private void mainLayout() {
+  private void addComponents(JFrame frame) {
     frame.add(infoPane());
     frame.add(Box.createVerticalStrut(10));
     frame.add(wordPicker());
