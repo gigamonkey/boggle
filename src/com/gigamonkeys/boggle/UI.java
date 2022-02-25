@@ -10,6 +10,8 @@ import javax.swing.Timer;
 
 public class UI {
 
+  private final static boolean colorPanels = false;
+
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
   public final static int WIDTH = 400;
@@ -33,26 +35,75 @@ public class UI {
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
     setupFrame();
-    layoutDice();
-    addStart();
-    addSubmit();
-    layoutInfo();
-    addMessage();
+    mainLayout();
     resetDice(false);
-    frame.repaint();
+    frame.setVisible(true);
   }
 
   private void setupFrame() {
     frame.setSize(WIDTH, HEIGHT);
-    frame.setLayout(null);
-    frame.setVisible(true);
+    frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
-  private void layoutDice() {
+  private void mainLayout() {
+    layoutInfo();
+    frame.add(Box.createVerticalStrut(10));
+    layoutWordPicker();
+    frame.add(Box.createVerticalStrut(10));
+    layoutBottom();
+  }
+
+  private void layoutInfo() {
+    Box panel = new Box(BoxLayout.X_AXIS);
+    if (colorPanels) {
+      panel.setOpaque(true);
+      panel.setBackground(Color.green);
+    }
+    panel.add(Box.createHorizontalStrut(MARGIN));
+    panel.add(clock);
+    panel.add(Box.createHorizontalGlue());
+    panel.add(scoreboard);
+    panel.add(Box.createHorizontalStrut(MARGIN));
+    frame.add(panel);
+  }
+
+  private void layoutWordPicker() {
+    Box panel = new Box(BoxLayout.Y_AXIS);
+    if (colorPanels) {
+      panel.setOpaque(true);
+      panel.setBackground(new Color(1.0f, 0.5f, 0.5f, 0.25f));
+    }
+    panel.add(dicePanel());
+    panel.add(Box.createVerticalStrut(3));
+    panel.add(submitButton());
+    frame.add(panel);
+  }
+
+  private void layoutBottom() {
+    Box panel = new Box(BoxLayout.X_AXIS);
+    if (colorPanels) {
+      panel.setOpaque(true);
+      panel.setBackground(new Color(0.5f, 1.0f, 0.5f, 0.25f));
+    }
+    panel.add(Box.createHorizontalStrut(MARGIN));
+    panel.add(messageBox());
+    panel.add(Box.createHorizontalGlue());
+    panel.add(startButton());
+    panel.add(Box.createHorizontalStrut(MARGIN));
+    Dimension d = new Dimension(WIDTH, 20);
+    panel.setPreferredSize(d);
+    frame.add(panel);
+  }
+
+  private JPanel dicePanel() {
 
     JPanel panel = new JPanel(new GridLayout(4,4));
-    panel.setBounds(X_OFFSET, MARGIN, BUTTONS_SIZE, BUTTONS_SIZE);
+    panel.setOpaque(false);
+
+    Dimension d = new Dimension(BUTTONS_SIZE, BUTTONS_SIZE);
+    panel.setPreferredSize(d);
+    panel.setMaximumSize(d);
 
     for (var i = 0; i < 16; i++) {
       var x = i % 4;
@@ -65,41 +116,31 @@ public class UI {
       panel.add(b);
       letterButtons[i] = b;
     }
-    frame.add(panel);
+    return panel;
   }
 
-  private void addStart() {
-    JButton b = new JButton("New Game!");
-    b.setBounds(fromRight(150 + MARGIN/2), fromBottom(30 + MARGIN/2), 150, 30);
-    b.addActionListener(e -> newGame());
-    frame.add(b);
-  }
-
-  private void addSubmit() {
-    int x = X_OFFSET;
-    int y = MARGIN + BUTTONS_SIZE + 2;
-    submit.setBounds(x, y, BUTTONS_SIZE, 30);
+  private Component submitButton() {
+    Dimension d = new Dimension((int)(BUTTONS_SIZE * 0.95), 20);
+    submit.setPreferredSize(d);
+    submit.setMaximumSize(d);
     submit.addActionListener(e -> submitWord());
     submit.setEnabled(false);
-    frame.add(submit);
+    submit.setAlignmentX(Component.CENTER_ALIGNMENT);
+    return submit;
   }
 
-  private void layoutInfo() {
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-    panel.add(clock);
-    panel.add(Box.createHorizontalGlue());
-    panel.add(scoreboard);
-    panel.setBounds(MARGIN, MARGIN/2, WIDTH - (2 * MARGIN), 20);
-    frame.add(panel);
+  private Component startButton() {
+    JButton b = new JButton("New Game!");
+    b.addActionListener(e -> newGame());
+    return b;
   }
 
-  private void addMessage() {
-    message.setBounds(MARGIN/2, fromBottom(MARGIN/2 + 20), 150, 20);
+  private Component messageBox() {
+    Dimension d = new Dimension(150, 20);
+    message.setPreferredSize(d);
     message.setForeground(Color.red);
-    frame.add(message);
+    return message;
   }
-
 
   private void updateScore(int score) {
     scoreboard.setText("Score: " + score);
@@ -166,13 +207,4 @@ public class UI {
       game.clearWord();
     }
   }
-
-  private int fromBottom(int p) {
-    return (int)(frame.getRootPane().getSize().getHeight() - p);
-  }
-
-  private int fromRight(int p) {
-    return (int)(frame.getRootPane().getSize().getWidth() - p);
-  }
-
 }
