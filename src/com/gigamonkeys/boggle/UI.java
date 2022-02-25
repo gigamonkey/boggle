@@ -18,6 +18,7 @@ public class UI {
   public final static int HEIGHT = BUTTONS_SIZE + 150;
 
   private Boggle game;
+  private Words words = new Words();
 
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
@@ -131,6 +132,7 @@ public class UI {
 
   private void newGame() {
     game = new Boggle();
+    words.reset();
     resetDice(true);
     submit.setEnabled(true);
     message.setText("");
@@ -143,8 +145,8 @@ public class UI {
   }
 
   private void dieClicked(Point p, String text) {
-    if (game.legal(p)) {
-      game.addToWord(text, p);
+    if (words.legal(p)) {
+      words.addToWord(text, p);
     }
   }
 
@@ -183,17 +185,18 @@ public class UI {
   }
 
   void submitWord() {
-    var w = game.getWord();
+    var w = words.getWord();
     if (w.length() > 0) {
-      if (game.wordUsed(w)) {
+      if (words.wasUsed(w)) {
         showMessage("“" + w + "” already used.", Color.red);
-      } else if (game.isWord(w)) {
+      } else if (words.isWord(w)) {
         showMessage("“" + w + "” is good!", Color.blue);
         updateScore(game.scoreWord(w));
+        words.use(w);
       } else {
         showMessage("“" + w + "” not in word list.", Color.red);
       }
-      game.clearWord();
+      words.clearWord();
     }
   }
 }

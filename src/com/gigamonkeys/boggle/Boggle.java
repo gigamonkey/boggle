@@ -34,61 +34,10 @@ class Boggle {
     "EIOSST", "ELRTTY", "HIMNUQu", "HLNNRZ",
   };
 
-  // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
-  private final static Set<String> words;
-  static {
-    var resource = Boggle.class.getResourceAsStream("word-list.txt");
-    var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
-    words = reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
-    System.out.println(words.size() + " words loaded.");
-  }
-
   private int score = 0;
-  private Set<String> usedWords = new HashSet<String>();
-  private Set<Point> usedDice = new HashSet<Point>();
-  private Point lastPress = null;
-  private StringBuilder currentWord = new StringBuilder();
-
 
   List<String> faces() {
     return shuffledList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
-  }
-
-  //
-  // Word management
-  //
-
-  boolean legal(Point p) {
-    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
-  }
-
-  boolean adjacent(Point p1, Point p2) {
-    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
-  }
-
-  void addToWord(String letter, Point p) {
-    assert legal(p);
-    currentWord.append(letter);
-    lastPress = p;
-    usedDice.add(p);
-  }
-
-  String getWord() {
-    return currentWord.toString().toLowerCase();
-  }
-
-  void clearWord() {
-    currentWord.delete(0, currentWord.length());
-    lastPress = null;
-    usedDice.clear();
-  }
-
-  boolean isWord(String word) {
-    return word.length() >= 3 && words.contains(word);
-  }
-
-  boolean wordUsed(String w) {
-    return usedWords.contains(w);
   }
 
   //
@@ -97,7 +46,6 @@ class Boggle {
 
   int scoreWord(String w) {
     score += points(w);
-    usedWords.add(w);
     return score;
   }
 
