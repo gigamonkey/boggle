@@ -23,9 +23,9 @@ public class UI {
 
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
-  private JLabel message = new JLabel("", SwingConstants.LEFT);
-  private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
+  private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
+  private JLabel message = new JLabel("", SwingConstants.LEFT);
   private long end = 0;
 
   UI() {
@@ -143,14 +143,12 @@ public class UI {
     scoreboard.setText("Score: " + score);
   }
 
-  void newGame() {
+  private void newGame() {
     game = new Boggle();
     resetDice(true);
     message.setText("");
-    updateScore(0);
-    end = System.currentTimeMillis() + GAME_IN_MILLIS;
-    updateClock();
-    startTimer();
+    updateScore(game.getScore());
+    startClock();
   }
 
   private void dieClicked(Point p, String text) {
@@ -167,8 +165,11 @@ public class UI {
     t.start();
   }
 
-  private void startTimer() {
-    new Timer(1000, e -> updateClock()).start();
+  private void startClock() {
+    end = System.currentTimeMillis() + GAME_IN_MILLIS;
+    var t = new Timer(1000, e -> updateClock());
+    t.setInitialDelay(0);
+    t.start();
   }
 
   private void updateClock() {
