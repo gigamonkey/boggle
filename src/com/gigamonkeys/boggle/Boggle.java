@@ -10,7 +10,7 @@ import javax.swing.Timer;
 
 class Boggle {
 
-  public static void main(String[] args) { new Boggle(); }
+  public static void main(String[] args) { new Boggle().makeFrame(); }
 
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
@@ -19,21 +19,15 @@ class Boggle {
   public final static int MARGIN = 20;
   public final static int HEIGHT = BUTTONS_SIZE + 150;
 
-  private Score score = new Score();
-  private Words words = new Words();
-  private Dice dice = new Dice();
+  private final Score score = new Score();
+  private final Words words = new Words();
+  private final Dice dice = new Dice();
 
-  private JButton[] letterButtons;
-  private JButton submit = new JButton("Submit");
-  private JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
-  private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
-  private JLabel message = new JLabel("", SwingConstants.LEFT);
-  private long end = 0;
-
-  Boggle() {
-    this.letterButtons = new JButton[16];
-    makeFrame();
-  }
+  private final JButton[] letterButtons = new JButton[16];
+  private final JButton submit = new JButton("Submit");
+  private final JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
+  private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
+  private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
   private void makeFrame() {
     JFrame frame = new JFrame("Boggle");
@@ -161,13 +155,13 @@ class Boggle {
   }
 
   private void startClock() {
-    end = System.currentTimeMillis() + GAME_IN_MILLIS;
-    var t = new Timer(1000, e -> updateClock((Timer)e.getSource()));
+    var end = System.currentTimeMillis() + GAME_IN_MILLIS;
+    var t = new Timer(1000, e -> updateClock((Timer)e.getSource(), end));
     t.setInitialDelay(0);
     t.start();
   }
 
-  private void updateClock(Timer t) {
+  private void updateClock(Timer t, long end) {
     var s = Math.max(0, Math.round((end - System.currentTimeMillis()) / 1000.0));
     var minutes = s / 60;
     var seconds = s % 60;
