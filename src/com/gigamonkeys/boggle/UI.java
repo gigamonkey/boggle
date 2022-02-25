@@ -47,14 +47,14 @@ public class UI {
   }
 
   private void mainLayout() {
-    layoutInfo();
+    frame.add(infoPane());
     frame.add(Box.createVerticalStrut(10));
-    layoutWordPicker();
+    frame.add(wordPicker());
     frame.add(Box.createVerticalStrut(10));
-    layoutBottom();
+    frame.add(bottomBar());
   }
 
-  private void layoutInfo() {
+  private Component infoPane() {
     Box panel = new Box(BoxLayout.X_AXIS);
     if (colorPanels) {
       panel.setOpaque(true);
@@ -65,10 +65,10 @@ public class UI {
     panel.add(Box.createHorizontalGlue());
     panel.add(scoreboard);
     panel.add(Box.createHorizontalStrut(MARGIN));
-    frame.add(panel);
+    return panel;
   }
 
-  private void layoutWordPicker() {
+  private Component wordPicker() {
     Box panel = new Box(BoxLayout.Y_AXIS);
     if (colorPanels) {
       panel.setOpaque(true);
@@ -77,10 +77,10 @@ public class UI {
     panel.add(dicePanel());
     panel.add(Box.createVerticalStrut(3));
     panel.add(submitButton());
-    frame.add(panel);
+    return panel;
   }
 
-  private void layoutBottom() {
+  private Component bottomBar() {
     Box panel = new Box(BoxLayout.X_AXIS);
     if (colorPanels) {
       panel.setOpaque(true);
@@ -91,9 +91,8 @@ public class UI {
     panel.add(Box.createHorizontalGlue());
     panel.add(startButton());
     panel.add(Box.createHorizontalStrut(MARGIN));
-    Dimension d = new Dimension(WIDTH, 20);
-    panel.setPreferredSize(d);
-    frame.add(panel);
+    panel.setPreferredSize(new Dimension(WIDTH, 20));
+    return panel;
   }
 
   private JPanel dicePanel() {
