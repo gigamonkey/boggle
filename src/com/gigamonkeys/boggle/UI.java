@@ -13,11 +13,10 @@ public class UI {
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
   public final static int WIDTH = 400;
-  public final static int BUTTON_SIZE = 55;
-  public final static int HEIGHT = (BUTTON_SIZE * 4) + 150;
-  public final static int WITH_GAP = BUTTON_SIZE + 5;
+  public final static int BUTTONS_SIZE = 235;
   public final static int MARGIN = 20;
-  public final static int X_OFFSET = (WIDTH - 4 * WITH_GAP) / 2;
+  public final static int HEIGHT = BUTTONS_SIZE + 150;
+  public final static int X_OFFSET = (WIDTH - BUTTONS_SIZE) / 2;
 
   private Boggle game;
 
@@ -37,8 +36,7 @@ public class UI {
     addDice();
     addStart();
     addSubmit();
-    addScoreboard();
-    addClock();
+    addInfo();
     addMessage();
     resetDice(false);
     frame.repaint();
@@ -54,7 +52,7 @@ public class UI {
   private void addDice() {
 
     JPanel panel = new JPanel(new GridLayout(4,4));
-    panel.setBounds(X_OFFSET, MARGIN, 4 * WITH_GAP, 4 * WITH_GAP);
+    panel.setBounds(X_OFFSET, MARGIN, BUTTONS_SIZE, BUTTONS_SIZE);
 
     for (var i = 0; i < 16; i++) {
       var x = i % 4;
@@ -79,12 +77,16 @@ public class UI {
 
   private void addSubmit() {
     int x = X_OFFSET;
-    int y = MARGIN + (WITH_GAP * 4) + 2;
-    int w = (WITH_GAP * 4);
-    submit.setBounds(x, y, w, 30);
+    int y = MARGIN + BUTTONS_SIZE + 2;
+    submit.setBounds(x, y, BUTTONS_SIZE, 30);
     submit.addActionListener(e -> submitWord());
     submit.setEnabled(false);
     frame.add(submit);
+  }
+
+  private void addInfo() {
+    addScoreboard();
+    addClock();
   }
 
   private void addScoreboard() {
