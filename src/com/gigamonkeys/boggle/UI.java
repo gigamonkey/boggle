@@ -21,7 +21,7 @@ public class UI {
 
   private JButton[] letterButtons;
   private JButton submit = new JButton("Submit");
-  private JLabel clock = new JLabel("00:00", SwingConstants.LEFT);
+  private JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
   private JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private JLabel message = new JLabel("", SwingConstants.LEFT);
   private long end = 0;
@@ -132,9 +132,14 @@ public class UI {
   private void newGame() {
     game = new Boggle();
     resetDice(true);
+    submit.setEnabled(true);
     message.setText("");
     updateScore(game.getScore());
     startClock();
+  }
+
+  private void gameOver() {
+    submit.setEnabled(false);
   }
 
   private void dieClicked(Point p, String text) {
@@ -153,20 +158,20 @@ public class UI {
 
   private void startClock() {
     end = System.currentTimeMillis() + GAME_IN_MILLIS;
-    var t = new Timer(1000, e -> updateClock());
+    var t = new Timer(1000, e -> updateClock((Timer)e.getSource()));
     t.setInitialDelay(0);
     t.start();
   }
 
-  private void updateClock() {
-    var s = Math.max(0, (end - System.currentTimeMillis()) / 1000);
+  private void updateClock(Timer t) {
+    var s = Math.max(0, Math.round((end - System.currentTimeMillis()) / 1000.0));
     var minutes = s / 60;
     var seconds = s % 60;
     clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
     if (s == 0) {
-      game.done();
+      t.stop();
+      gameOver();
     }
-    submit.setEnabled(!game.over());
   }
 
   private void resetDice(boolean enable) {

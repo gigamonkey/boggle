@@ -44,7 +44,6 @@ class Boggle {
   }
 
   private int score = 0;
-  private boolean gameOver = false;
   private Set<String> usedWords = new HashSet<String>();
   private Set<Point> usedDice = new HashSet<Point>();
   private Point lastPress = null;
@@ -92,6 +91,10 @@ class Boggle {
     return usedWords.contains(w);
   }
 
+  //
+  // Scoring
+  //
+
   int scoreWord(String w) {
     score += points(w);
     usedWords.add(w);
@@ -106,13 +109,6 @@ class Boggle {
     return score;
   }
 
-  void done() {
-    gameOver = true;
-  }
-
-  boolean over() {
-    return gameOver;
-  }
 
   public static void main(String[] args) { new UI(); }
 }
