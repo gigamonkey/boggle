@@ -10,8 +10,6 @@ import javax.swing.Timer;
 
 public class UI {
 
-  private final static boolean colorPanels = false;
-
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
   public final static int WIDTH = 400;
@@ -54,10 +52,6 @@ public class UI {
 
   private Component infoPane() {
     Box panel = new Box(BoxLayout.X_AXIS);
-    if (colorPanels) {
-      panel.setOpaque(true);
-      panel.setBackground(Color.green);
-    }
     panel.add(Box.createHorizontalStrut(MARGIN));
     panel.add(clock);
     panel.add(Box.createHorizontalGlue());
@@ -68,10 +62,6 @@ public class UI {
 
   private Component wordPicker() {
     Box panel = new Box(BoxLayout.Y_AXIS);
-    if (colorPanels) {
-      panel.setOpaque(true);
-      panel.setBackground(new Color(1.0f, 0.5f, 0.5f, 0.25f));
-    }
     panel.add(dicePanel());
     panel.add(Box.createVerticalStrut(3));
     panel.add(submitButton());
@@ -80,10 +70,6 @@ public class UI {
 
   private Component bottomBar() {
     Box panel = new Box(BoxLayout.X_AXIS);
-    if (colorPanels) {
-      panel.setOpaque(true);
-      panel.setBackground(new Color(0.5f, 1.0f, 0.5f, 0.25f));
-    }
     panel.add(Box.createHorizontalStrut(MARGIN));
     panel.add(messageBox());
     panel.add(Box.createHorizontalGlue());
