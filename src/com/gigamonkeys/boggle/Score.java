@@ -1,5 +1,8 @@
 package com.gigamonkeys.boggle;
 
+/**
+ * Keep track of the current score and apply the scoring rules.
+ */
 class Score {
 
   // From https://www.hasbro.com/common/instruct/boggle.pdf
@@ -12,7 +15,5 @@ class Score {
     return score;
   }
 
-  void reset() {
-    score = 0;
-  }
+  void reset() { score = 0; }
 }

@@ -1,11 +1,17 @@
 package com.gigamonkeys.boggle;
 
-import java.awt.*;
-import java.awt.Point;
 import java.awt.Color;
-import java.awt.event.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Point;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 class Boggle {

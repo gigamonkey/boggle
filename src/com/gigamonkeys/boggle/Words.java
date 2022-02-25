@@ -1,19 +1,15 @@
 package com.gigamonkeys.boggle;
 
-import static com.gigamonkeys.boggle.Util.shuffledList;
-
-import java.awt.Color;
 import java.awt.Point;
-import java.awt.event.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
-import javax.swing.*;
-import javax.swing.Timer;
 
 /**
- * Manage the words as they are built up.
+ * Manage the words as they are built up know about legal words.
  */
 class Words {
 

@@ -2,8 +2,13 @@ package com.gigamonkeys.boggle;
 
 import static com.gigamonkeys.boggle.Util.shuffledList;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
+/**
+ * Provide random legal lists of dice faces by randomly positioning
+ * the dice and then randomly select a face for each die.
+ */
 class Dice {
 
   private final static Random r = new Random();
