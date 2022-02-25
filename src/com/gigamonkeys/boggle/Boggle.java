@@ -1,5 +1,7 @@
 package com.gigamonkeys.boggle;
 
+import static com.gigamonkeys.boggle.Util.shuffledList;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.*;
@@ -17,7 +19,6 @@ class Boggle {
   private final static int[] scores = {1, 1, 2, 3, 5, 11};
 
   // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
-
   private final static String[] CLASSIC = {
     "AACIOT", "ABILTY", "ABJMOQu", "ACDEMP",
     "ACELRS", "ADENVZ", "AHMORS", "BIFORX",
@@ -55,15 +56,10 @@ class Boggle {
   private Point lastPress = null;
   private StringBuilder currentWord = new StringBuilder();
 
+
   List<String> faces() {
-    return shuffled(Arrays.asList(MODERN)).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
+    return shuffledList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
   }
-
-  List<String> shuffled(List<String> items) {
-    Collections.shuffle(items);
-    return items;
-  }
-
 
   //
   // Word management
