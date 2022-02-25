@@ -33,10 +33,10 @@ public class UI {
     this.letterButtons = new JButton[16];
     this.frame = new JFrame("Boggle");
     setupFrame();
-    addDice();
+    layoutDice();
     addStart();
     addSubmit();
-    addInfo();
+    layoutInfo();
     addMessage();
     resetDice(false);
     frame.repaint();
@@ -49,7 +49,7 @@ public class UI {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
   }
 
-  private void addDice() {
+  private void layoutDice() {
 
     JPanel panel = new JPanel(new GridLayout(4,4));
     panel.setBounds(X_OFFSET, MARGIN, BUTTONS_SIZE, BUTTONS_SIZE);
@@ -84,19 +84,14 @@ public class UI {
     frame.add(submit);
   }
 
-  private void addInfo() {
-    addScoreboard();
-    addClock();
-  }
-
-  private void addScoreboard() {
-    scoreboard.setBounds(fromRight(100 + MARGIN/2), MARGIN/2, 100, 20);
-    frame.add(scoreboard);
-  }
-
-  private void addClock() {
-    clock.setBounds(MARGIN/2, MARGIN/2, 50, 20);
-    frame.add(clock);
+  private void layoutInfo() {
+    JPanel panel = new JPanel();
+    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+    panel.add(clock);
+    panel.add(Box.createHorizontalGlue());
+    panel.add(scoreboard);
+    panel.setBounds(MARGIN, MARGIN/2, WIDTH - (2 * MARGIN), 20);
+    frame.add(panel);
   }
 
   private void addMessage() {
