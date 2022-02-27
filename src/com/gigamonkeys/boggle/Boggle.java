@@ -34,10 +34,7 @@ class Boggle {
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
   private final JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
-  private final JLabel scoreboard = new JLabel(
-    "Score: 0",
-    SwingConstants.RIGHT
-  );
+  private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
   private long endOfGame = System.currentTimeMillis();
@@ -179,15 +176,10 @@ class Boggle {
   }
 
   private void updateClock() {
-    var s = Math.max(
-      0,
-      Math.round((endOfGame - System.currentTimeMillis()) / 1000.0)
-    );
+    var s = Math.max(0, Math.round((endOfGame - System.currentTimeMillis()) / 1000.0));
     var minutes = s / 60;
     var seconds = s % 60;
-    clock.setText(
-      minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds)
-    );
+    clock.setText(minutes + ":" + (seconds < 10 ? "0" + seconds : "" + seconds));
     if (s == 0) gameOver();
   }
 

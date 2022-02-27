@@ -53,9 +53,6 @@ class Dice {
   };
 
   List<String> faces() {
-    return shuffledList(MODERN)
-      .stream()
-      .map(s -> s.split("", 6)[r.nextInt(6)])
-      .toList();
+    return shuffledList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
   }
 }

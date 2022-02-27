@@ -18,14 +18,8 @@ class Words {
 
   static {
     var resource = Boggle.class.getResourceAsStream("word-list.txt");
-    var reader = new BufferedReader(
-      new InputStreamReader(resource, StandardCharsets.UTF_8)
-    );
-    words =
-      reader
-        .lines()
-        .map(line -> line.toLowerCase())
-        .collect(Collectors.toCollection(HashSet::new));
+    var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
+    words = reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
     System.out.println(words.size() + " words loaded.");
   }
 
@@ -35,9 +29,7 @@ class Words {
   private StringBuilder currentWord = new StringBuilder();
 
   boolean legal(Point p) {
-    return (
-      !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p))
-    );
+    return (!usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p)));
   }
 
   boolean adjacent(Point p1, Point p2) {
