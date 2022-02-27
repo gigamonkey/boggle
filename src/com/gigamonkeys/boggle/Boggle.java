@@ -30,6 +30,7 @@ class Boggle {
   private final Score score = new Score();
   private final Words words = new Words();
   private final Dice dice = new Dice();
+  private final Timer clockTimer = new Timer(1000, e -> updateClock());
 
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
@@ -37,13 +38,11 @@ class Boggle {
   private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
+
   private long endOfGame = System.currentTimeMillis();
-  private Timer clockTimer;
 
   Boggle() {
-    clockTimer = new Timer(1000, e -> updateClock());
     clockTimer.setInitialDelay(0);
-    clockTimer.start();
   }
 
   private void makeFrame() {
@@ -102,10 +101,7 @@ class Boggle {
     panel.setMaximumSize(d);
 
     for (var i = 0; i < 16; i++) {
-      var x = i % 4;
-      var y = i / 4;
-
-      final var p = new Point(x, y);
+      final var p = new Point(i % 4, i / 4);
       final var b = new JButton("");
       b.addActionListener(e -> dieClicked(p, b.getText()));
       b.setEnabled(false);
@@ -153,6 +149,9 @@ class Boggle {
   }
 
   private void gameOver() {
+    for (var b: letterButtons) {
+      b.setEnabled(false);
+    }
     submit.setEnabled(false);
   }
 
