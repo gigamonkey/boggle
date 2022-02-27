@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -13,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 
 class Boggle {
 
@@ -27,6 +29,11 @@ class Boggle {
   public static final int MARGIN = 20;
   public static final int HEIGHT = BUTTONS_SIZE + 150;
 
+  private static final Border whiteline = BorderFactory.createLineBorder(Color.white);
+
+  private static Border defaultBorder = null;
+  private static Color defaultButtonColor = null;
+
   private final Score score = new Score();
   private final Words words = new Words();
   private final Dice dice = new Dice();
@@ -37,7 +44,6 @@ class Boggle {
   private final JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
   private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
-
 
   private long endOfGame = System.currentTimeMillis();
 
@@ -103,8 +109,13 @@ class Boggle {
     for (var i = 0; i < 16; i++) {
       final var p = new Point(i % 4, i / 4);
       final var b = new JButton("");
-      b.addActionListener(e -> dieClicked(p, b.getText()));
+      b.addActionListener(e -> dieClicked(p, b));
       b.setEnabled(false);
+      b.setOpaque(true);
+      if (defaultBorder == null) {
+        defaultBorder = b.getBorder();
+        defaultButtonColor = b.getBackground();
+      }
       panel.add(b);
       letterButtons[i] = b;
     }
@@ -149,15 +160,17 @@ class Boggle {
   }
 
   private void gameOver() {
-    for (var b: letterButtons) {
+    for (var b : letterButtons) {
       b.setEnabled(false);
     }
     submit.setEnabled(false);
   }
 
-  private void dieClicked(Point p, String text) {
+  private void dieClicked(Point p, JButton b) {
     if (words.legal(p)) {
-      words.addToWord(text, p);
+      words.addToWord(b.getText(), p);
+      b.setBackground(Color.gray);
+      b.setBorder(whiteline);
     }
   }
 
@@ -203,6 +216,14 @@ class Boggle {
         showMessage("“" + w + "” not in word list.", Color.red);
       }
       words.clearWord();
+      resetLetterButtons();
+    }
+  }
+
+  private void resetLetterButtons() {
+    for (var b : letterButtons) {
+      b.setBorder(defaultBorder);
+      b.setBackground(defaultButtonColor);
     }
   }
 }
