@@ -14,11 +14,18 @@ import java.util.stream.Collectors;
 class Words {
 
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
-  private final static Set<String> words;
+  private static final Set<String> words;
+
   static {
     var resource = Boggle.class.getResourceAsStream("word-list.txt");
-    var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
-    words = reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
+    var reader = new BufferedReader(
+      new InputStreamReader(resource, StandardCharsets.UTF_8)
+    );
+    words =
+      reader
+        .lines()
+        .map(line -> line.toLowerCase())
+        .collect(Collectors.toCollection(HashSet::new));
     System.out.println(words.size() + " words loaded.");
   }
 
@@ -28,7 +35,9 @@ class Words {
   private StringBuilder currentWord = new StringBuilder();
 
   boolean legal(Point p) {
-    return !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p));
+    return (
+      !usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p))
+    );
   }
 
   boolean adjacent(Point p1, Point p2) {

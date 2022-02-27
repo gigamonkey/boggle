@@ -14,5 +14,4 @@ class Util {
     Collections.shuffle(list);
     return list;
   }
-
 }

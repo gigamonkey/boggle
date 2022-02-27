@@ -12,6 +12,10 @@ compile: $(sources)
 	javac -Xlint:deprecation -cp src:classes -d classes/ $(sources)
 
 
+pretty:
+	prettier --plugin ~/node_modules/prettier-plugin-java/ --write **/*.java
+
+
 resources: $(resources)
 
 

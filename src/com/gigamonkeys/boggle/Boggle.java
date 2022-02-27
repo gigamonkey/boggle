@@ -16,14 +16,16 @@ import javax.swing.Timer;
 
 class Boggle {
 
-  public static void main(String[] args) { new Boggle().makeFrame(); }
+  public static void main(String[] args) {
+    new Boggle().makeFrame();
+  }
 
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
 
-  public final static int WIDTH = 400;
-  public final static int BUTTONS_SIZE = 235;
-  public final static int MARGIN = 20;
-  public final static int HEIGHT = BUTTONS_SIZE + 150;
+  public static final int WIDTH = 400;
+  public static final int BUTTONS_SIZE = 235;
+  public static final int MARGIN = 20;
+  public static final int HEIGHT = BUTTONS_SIZE + 150;
 
   private final Score score = new Score();
   private final Words words = new Words();
@@ -95,8 +97,7 @@ class Boggle {
   }
 
   private JPanel dicePanel() {
-
-    JPanel panel = new JPanel(new GridLayout(4,4));
+    JPanel panel = new JPanel(new GridLayout(4, 4));
     panel.setOpaque(false);
 
     Dimension d = new Dimension(BUTTONS_SIZE, BUTTONS_SIZE);
@@ -118,7 +119,7 @@ class Boggle {
   }
 
   private Component submitButton() {
-    Dimension d = new Dimension((int)(BUTTONS_SIZE * 0.95), 20);
+    Dimension d = new Dimension((int) (BUTTONS_SIZE * 0.95), 20);
     submit.setPreferredSize(d);
     submit.setMaximumSize(d);
     submit.addActionListener(e -> submitWord());
