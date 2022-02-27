@@ -171,7 +171,28 @@ class Boggle {
       words.addToWord(b.getText(), p);
       b.setBackground(Color.gray);
       b.setBorder(whiteline);
+    } else {
+      shakeButton(b);
     }
+  }
+
+  private void shakeButton(JButton b) {
+    final var end = System.currentTimeMillis() + 200;
+    final var start = b.getLocation();
+    Timer t = new Timer(
+      64,
+      e -> {
+        if (System.currentTimeMillis() < end) {
+          var s = b.getLocation().x >= start.x ? -1 : 1;
+          b.setLocation(start.x + (2 * s), start.y);
+        } else {
+          b.setLocation(start);
+          ((Timer) e.getSource()).stop();
+        }
+      }
+    );
+    t.setInitialDelay(0);
+    t.start();
   }
 
   private void showMessage(String msg, Color color) {
