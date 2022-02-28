@@ -29,27 +29,30 @@ class Keyboard {
   public void letterTyped(String letter, JButton[] buttons) {
     var text = letterToText(letter);
     if (text != null) {
-      var possible = possibleButtons(text, buttons);
-      currentPossibilities = updatedPossibilities(possible);
-      currentWord.append(text);
-      highlightButtons(buttons);
+      currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
+      updateWord(text, buttons);
     }
   }
 
   public void letterPressed(Point p, JButton[] buttons) {
     var i = p.y * 4 + p.x;
     currentPossibilities = updatedPossibilities(new int[] { i });
-    currentWord.append(buttons[i].getText());
-    highlightButtons(buttons);
+    updateWord(buttons[i].getText(), buttons);
   }
 
   public void enter() {
     if (!currentPossibilities.isEmpty()) {
       this.boggle.submitWord(getWord());
     } else {
-      boggle.showMessage("Can't make " + getWord(), Color.RED, boggle.FLASH);
+      boggle.showMessage("Can't make " + getWord(), Color.red, boggle.FLASH);
     }
     reset();
+  }
+
+  private void updateWord(String text, JButton[] buttons) {
+    currentWord.append(text);
+    highlightButtons(buttons);
+    boggle.showMessage(getWord(), Color.black);
   }
 
   private void reset() {

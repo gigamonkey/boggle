@@ -261,7 +261,7 @@ class Boggle {
     t.start();
   }
 
-  private void showMessage(String msg, Color color) {
+  void showMessage(String msg, Color color) {
     message.setForeground(color);
     message.setText(msg);
   }
