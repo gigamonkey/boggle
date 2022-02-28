@@ -85,7 +85,7 @@ class Boggle {
       "letter",
       new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
-          keyboard.letter(e.getActionCommand(), letterButtons);
+          keyboard.letterTyped(e.getActionCommand(), letterButtons);
         }
       }
     );
@@ -164,7 +164,7 @@ class Boggle {
     Dimension d = new Dimension((int) (BUTTONS_SIZE * 0.95), 20);
     submit.setPreferredSize(d);
     submit.setMaximumSize(d);
-    submit.addActionListener(e -> submitWord());
+    submit.addActionListener(e -> keyboard.enter());
     submit.setEnabled(false);
     submit.setAlignmentX(Component.CENTER_ALIGNMENT);
     return submit;
@@ -209,6 +209,10 @@ class Boggle {
   }
 
   private void dieClicked(Point p, JButton b) {
+    keyboard.letterPressed(p, letterButtons);
+  }
+
+  private void dieClickedX(Point p, JButton b) {
     if (words.legal(p)) {
       words.addToWord(b.getText(), p);
       highlightLetterButton(b);
@@ -226,7 +230,6 @@ class Boggle {
     b.setBackground(Color.lightGray);
     b.setBorder(whiteline);
   }
-
 
   void resetLetterButtons() {
     for (var b : letterButtons) {
@@ -286,10 +289,6 @@ class Boggle {
       letterButtons[i].setEnabled(enable);
       resetLetterButton(letterButtons[i]);
     }
-  }
-
-  void submitWord() {
-    submitThisWord(words.getWord());
   }
 
   void submitThisWord(String word) {

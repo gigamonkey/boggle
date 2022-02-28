@@ -30,7 +30,7 @@ class Keyboard {
     boggle.resetLetterButtons();
   }
 
-  public void letter(String letter, JButton[] buttons) {
+  public void letterTyped(String letter, JButton[] buttons) {
     var text = letterToText(letter);
     if (text != null) {
       var possible = possibleButtons(text, buttons);
@@ -40,17 +40,36 @@ class Keyboard {
     }
   }
 
+  public void letterPressed(Point p, JButton[] buttons) {
+    var i = p.y * 4 + p.x;
+    currentPossibilities = updatedPossibilities(new int[] { i });
+    currentWord.append(buttons[i].getText());
+    highlightButtons(buttons);
+  }
+
   public void enter() {
     if (!currentPossibilities.isEmpty()) {
-      System.out.println("Can process word: " + currentWord.toString());
-      this.boggle.submitThisWord(currentWord.toString());
+      System.out.println("Can process word: " + getWord());
+      this.boggle.submitThisWord(getWord());
     } else {
-      System.out.println("No possible paths to: " + currentWord.toString());
+      System.out.println("No possible paths to: " + getWord());
     }
     reset();
   }
 
+  String getWord() {
+    return currentWord.toString().toLowerCase();
+  }
+
+  private void showPossibilities() {
+    System.out.println("Possibilities:");
+    for (var p : currentPossibilities) {
+      System.out.println("  " + p);
+    }
+  }
+
   private void highlightButtons(JButton[] buttons) {
+    showPossibilities();
     boggle.resetLetterButtons();
     for (var possibility : currentPossibilities) {
       for (var p : possibility) {
