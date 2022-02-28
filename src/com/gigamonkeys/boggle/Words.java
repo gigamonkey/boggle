@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,11 +30,7 @@ class Words {
   private StringBuilder currentWord = new StringBuilder();
 
   boolean legal(Point p) {
-    return (!usedDice.contains(p) && (lastPress == null || adjacent(lastPress, p)));
-  }
-
-  boolean adjacent(Point p1, Point p2) {
-    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
+    return legalMove(usedDice, lastPress, p);
   }
 
   void addToWord(String letter, Point p) {
@@ -68,5 +65,15 @@ class Words {
   void reset() {
     clearWord();
     usedWords.clear();
+  }
+
+  // Static so Keyboard can use this same logic.
+
+  static boolean legalMove(Collection<Point> soFar, Point previous, Point p) {
+    return (!soFar.contains(p) && (previous == null || adjacent(previous, p)));
+  }
+
+  static boolean adjacent(Point p1, Point p2) {
+    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
   }
 }

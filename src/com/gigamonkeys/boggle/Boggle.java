@@ -5,13 +5,19 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import javax.swing.border.Border;
@@ -38,6 +44,7 @@ class Boggle {
   private final Words words = new Words();
   private final Dice dice = new Dice();
   private final Timer clockTimer = new Timer(1000, e -> updateClock());
+  private final Keyboard keyboard = new Keyboard(this);
 
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
@@ -56,9 +63,40 @@ class Boggle {
     frame.setSize(WIDTH, HEIGHT);
     frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    setupKeyMap(frame);
+
     addComponents(frame);
     resetDice(false);
     frame.setVisible(true);
+    frame.toFront();
+    frame.requestFocus();
+  }
+
+  private void setupKeyMap(JFrame frame) {
+    var keys = frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    var actions = frame.getRootPane().getActionMap();
+    for (var c : "abcdefghijklmnopqrstuvwxyz".toCharArray()) {
+      keys.put(KeyStroke.getKeyStroke(c), "letter");
+    }
+    keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+
+    actions.put(
+      "letter",
+      new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          keyboard.letter(e.getActionCommand(), letterButtons);
+        }
+      }
+    );
+    actions.put(
+      "enter",
+      new AbstractAction() {
+        public void actionPerformed(ActionEvent e) {
+          keyboard.enter();
+        }
+      }
+    );
   }
 
   private void addComponents(JFrame frame) {
@@ -225,16 +263,19 @@ class Boggle {
   }
 
   void submitWord() {
-    var w = words.getWord();
-    if (w.length() > 0) {
-      if (words.wasUsed(w)) {
-        showMessage("“" + w + "” already used.", Color.red);
-      } else if (words.isWord(w)) {
-        showMessage("“" + w + "” is good!", Color.blue);
-        updateScore(score.scoreWord(w));
-        words.use(w);
+    submitThisWord(words.getWord());
+  }
+
+  void submitThisWord(String word) {
+    if (word.length() > 0) {
+      if (words.wasUsed(word)) {
+        showMessage("“" + word + "” already used.", Color.red);
+      } else if (words.isWord(word)) {
+        showMessage("“" + word + "” is good!", Color.blue);
+        updateScore(score.scoreWord(word));
+        words.use(word);
       } else {
-        showMessage("“" + w + "” not in word list.", Color.red);
+        showMessage("“" + word + "” not in word list.", Color.red);
       }
       words.clearWord();
       resetLetterButtons();
