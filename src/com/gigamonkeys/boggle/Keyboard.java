@@ -40,13 +40,7 @@ class Keyboard {
     afterQ = isQ;
 
     if (text != null) {
-      Set<Point> possible = new HashSet<>();
-      for (var i = 0; i < buttons.length; i++) {
-        if (buttons[i].getText().equalsIgnoreCase(text)) {
-          possible.add(new Point(i % 4, i / 4));
-        }
-      }
-      updatePossibilities(possible);
+      updatePossibilities(possibleButtons(text, buttons));
       currentWord.append(text);
     }
 
@@ -64,6 +58,16 @@ class Keyboard {
       System.out.println("No possible paths to: " + currentWord.toString());
     }
     reset();
+  }
+
+  private Set<Point> possibleButtons(String text, JButton[] buttons) {
+    Set<Point> possible = new HashSet<>();
+    for (var i = 0; i < buttons.length; i++) {
+      if (buttons[i].getText().equalsIgnoreCase(text)) {
+        possible.add(new Point(i % 4, i / 4));
+      }
+    }
+    return possible;
   }
 
   private void updatePossibilities(Set<Point> possible) {
