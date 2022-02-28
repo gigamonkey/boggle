@@ -12,7 +12,7 @@ import javax.swing.JButton;
 class Keyboard {
 
   private final Boggle boggle;
-  private List<List<Point>> currentPossibilities = new ArrayList<>();
+  private List<List<Point>> currentPossibilities;
   private boolean afterQ = false;
   private StringBuilder currentWord = new StringBuilder();
 
@@ -22,8 +22,7 @@ class Keyboard {
   }
 
   public void reset() {
-    currentPossibilities.clear();
-    currentPossibilities.add(Collections.emptyList());
+    currentPossibilities = List.of(Collections.emptyList());
     currentWord.delete(0, currentWord.length());
   }
 
@@ -53,6 +52,7 @@ class Keyboard {
 
     if (currentPossibilities.size() == 0) {
       // Maybe report not a legal word (shake the whole board or something.)
+      System.out.println("No longer any possibilites.");
     }
   }
 
@@ -67,19 +67,15 @@ class Keyboard {
   }
 
   private void updatePossibilities(Set<Point> possible) {
-    // Bet there's a more elegant way of expressing this with Stream.flatMap
-    var updated = new ArrayList<List<Point>>();
-    for (var path : currentPossibilities) {
-      for (var p : possible) {
-        if (ok(p, path)) {
-          var newPath = new ArrayList<>(path);
-          newPath.add(p);
-          updated.add(newPath);
-        }
-      }
-    }
-    currentPossibilities = updated;
-    System.out.println("Current possibilites: " + currentPossibilities);
+    currentPossibilities =
+      currentPossibilities.stream().flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p))).toList();
+    System.out.println("Current possibilites: " + currentPossibilities.size());
+  }
+
+  private List<Point> appending(List<Point> path, Point p) {
+    var newPath = new ArrayList<>(path);
+    newPath.add(p);
+    return newPath;
   }
 
   private boolean ok(Point p, List<Point> path) {
