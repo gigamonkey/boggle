@@ -211,11 +211,25 @@ class Boggle {
   private void dieClicked(Point p, JButton b) {
     if (words.legal(p)) {
       words.addToWord(b.getText(), p);
-      b.setBackground(Color.gray);
-      b.setBorder(whiteline);
+      highlightLetterButton(b);
     } else {
       shakeButton(b);
     }
+  }
+
+  void highlightLetterButton(JButton b) {
+    b.setBackground(Color.gray);
+    b.setBorder(whiteline);
+  }
+
+  void lowlightLetterButton(JButton b) {
+    b.setBackground(Color.lightGray);
+    b.setBorder(whiteline);
+  }
+
+  void resetLetterButton(JButton b) {
+    b.setBorder(defaultBorder);
+    b.setBackground(defaultButtonColor);
   }
 
   private void shakeButton(JButton b) {
@@ -288,10 +302,9 @@ class Boggle {
     }
   }
 
-  private void resetLetterButtons() {
+  void resetLetterButtons() {
     for (var b : letterButtons) {
-      b.setBorder(defaultBorder);
-      b.setBackground(defaultButtonColor);
+      resetLetterButton(b);
     }
   }
 }

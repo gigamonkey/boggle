@@ -2,6 +2,7 @@ package com.gigamonkeys.boggle;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -20,19 +21,22 @@ class Keyboard {
 
   Keyboard(Boggle boggle) {
     this.boggle = boggle;
-    reset();
+    currentPossibilities = List.of(Collections.emptyList());
   }
 
   public void reset() {
     currentPossibilities = List.of(Collections.emptyList());
     currentWord.delete(0, currentWord.length());
+    boggle.resetLetterButtons();
   }
 
   public void letter(String letter, JButton[] buttons) {
     var text = letterToText(letter);
     if (text != null) {
-      currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
+      var possible = possibleButtons(text, buttons);
+      currentPossibilities = updatedPossibilities(possible);
       currentWord.append(text);
+      highlightButtons(buttons);
     }
   }
 
@@ -46,18 +50,32 @@ class Keyboard {
     reset();
   }
 
-  private List<Point> possibleButtons(String text, JButton[] buttons) {
+  private void highlightButtons(JButton[] buttons) {
+    boggle.resetLetterButtons();
+    for (var possibility : currentPossibilities) {
+      for (var p : possibility) {
+        boggle.lowlightLetterButton(buttons[p.y * 4 + p.x]);
+      }
+    }
+  }
+
+  private int[] possibleButtons(String text, JButton[] buttons) {
     return IntStream
       .range(0, buttons.length)
       .filter(i -> buttons[i].getText().equalsIgnoreCase(text))
-      .mapToObj(i -> new Point(i % 4, i / 4))
-      .toList();
+      .toArray();
   }
 
-  private List<List<Point>> updatedPossibilities(List<Point> possible) {
+  private List<List<Point>> updatedPossibilities(int[] possible) {
     return currentPossibilities
       .stream()
-      .flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p)))
+      .flatMap(path ->
+        Arrays
+          .stream(possible)
+          .mapToObj(i -> new Point(i % 4, i / 4))
+          .filter(p -> ok(p, path))
+          .map(p -> appending(path, p))
+      )
       .toList();
   }
 
