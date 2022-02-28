@@ -9,7 +9,7 @@ all: build run
 build: compile resources
 
 compile: $(sources)
-	javac -Xlint:deprecation -cp src:classes -d classes/ $(sources)
+	javac -Xdiags:verbose -Xlint:deprecation -cp src:classes -d classes/ $(sources)
 
 
 pretty:

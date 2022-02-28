@@ -18,13 +18,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 
 class Boggle {
 
   public static void main(String[] args) {
-    new Boggle().makeFrame();
+    SwingUtilities.invokeLater(() -> new Boggle().makeFrame());
   }
 
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;

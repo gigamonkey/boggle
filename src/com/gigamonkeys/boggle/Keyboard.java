@@ -1,8 +1,10 @@
 package com.gigamonkeys.boggle;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 import javax.swing.JButton;
 
 /*
@@ -40,13 +42,15 @@ class Keyboard {
     afterQ = isQ;
 
     if (text != null) {
-      updatePossibilities(possibleButtons(text, buttons));
+      currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
       currentWord.append(text);
     }
 
     if (currentPossibilities.size() == 0) {
       // Maybe report not a legal word (shake the whole board or something.)
       System.out.println("No longer any possibilites.");
+    } else {
+      System.out.println("Current possibilites: " + currentPossibilities.size());
     }
   }
 
@@ -60,23 +64,19 @@ class Keyboard {
     reset();
   }
 
-  private Set<Point> possibleButtons(String text, JButton[] buttons) {
-    Set<Point> possible = new HashSet<>();
-    for (var i = 0; i < buttons.length; i++) {
-      if (buttons[i].getText().equalsIgnoreCase(text)) {
-        possible.add(new Point(i % 4, i / 4));
-      }
-    }
-    return possible;
+  private List<Point> possibleButtons(String text, JButton[] buttons) {
+    return IntStream
+      .range(0, buttons.length)
+      .filter(i -> buttons[i].getText().equalsIgnoreCase(text))
+      .mapToObj(i -> new Point(i % 4, i / 4))
+      .toList();
   }
 
-  private void updatePossibilities(Set<Point> possible) {
-    currentPossibilities =
-      currentPossibilities
-        .stream()
-        .flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p)))
-        .toList();
-    System.out.println("Current possibilites: " + currentPossibilities.size());
+  private List<List<Point>> updatedPossibilities(List<Point> possible) {
+    return currentPossibilities
+      .stream()
+      .flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p)))
+      .toList();
   }
 
   private List<Point> appending(List<Point> path, Point p) {
