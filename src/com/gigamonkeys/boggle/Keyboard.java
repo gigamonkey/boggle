@@ -72,8 +72,13 @@ class Keyboard {
   private void highlightButtons(JButton[] buttons) {
     boggle.resetLetterButtons();
     for (var possibility : currentPossibilities) {
-      for (var p : possibility) {
-        boggle.lowlightLetterButton(buttons[p.y * 4 + p.x]);
+      for (var i = 0; i < possibility.size(); i++) {
+        var p = possibility.get(i);
+        if (i == possibility.size() - 1) {
+          boggle.highlightLetterButton(buttons[p.y * 4 + p.x]);
+        } else {
+          boggle.lowlightLetterButton(buttons[p.y * 4 + p.x]);
+        }
       }
     }
   }
