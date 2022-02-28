@@ -10,7 +10,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Manage the words as they are built up know about legal words.
+ * Manage the guessed words, determining if they are valid words and
+ * have not been guessed already.
  */
 class Words {
 
@@ -26,45 +27,20 @@ class Words {
   }
 
   private Set<String> usedWords = new HashSet<>();
-  private Set<Point> usedDice = new HashSet<>();
-  private Point lastPress = null;
-  private StringBuilder currentWord = new StringBuilder();
-
-  boolean legal(Point p) {
-    return legalMove(usedDice, lastPress, p);
-  }
-
-  void addToWord(String letter, Point p) {
-    assert legal(p);
-    currentWord.append(letter);
-    lastPress = p;
-    usedDice.add(p);
-  }
-
-  String getWord() {
-    return currentWord.toString().toLowerCase();
-  }
-
-  void clearWord() {
-    currentWord.delete(0, currentWord.length());
-    lastPress = null;
-    usedDice.clear();
-  }
 
   boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
   }
 
-  void use(String w) {
-    usedWords.add(w);
+  void use(String word) {
+    usedWords.add(word);
   }
 
-  boolean wasUsed(String w) {
-    return usedWords.contains(w);
+  boolean wasUsed(String word) {
+    return usedWords.contains(word);
   }
 
   void reset() {
-    clearWord();
     usedWords.clear();
   }
 

@@ -212,15 +212,6 @@ class Boggle {
     keyboard.letterPressed(p, letterButtons);
   }
 
-  private void dieClickedX(Point p, JButton b) {
-    if (words.legal(p)) {
-      words.addToWord(b.getText(), p);
-      highlightLetterButton(b);
-    } else {
-      shakeButton(b);
-    }
-  }
-
   void highlightLetterButton(JButton b) {
     b.setBackground(Color.gray);
     b.setBorder(whiteline);
@@ -303,7 +294,6 @@ class Boggle {
         } else {
           showMessage("“" + word + "” not in word list.", Color.red);
         }
-        words.clearWord();
         resetLetterButtons();
       }
     }
