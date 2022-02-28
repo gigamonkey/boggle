@@ -34,7 +34,7 @@ class Words {
     usedWords.add(word);
   }
 
-  boolean wasUsed(String word) {
+  boolean alreadyUsed(String word) {
     return usedWords.contains(word);
   }
 

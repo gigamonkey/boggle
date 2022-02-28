@@ -29,6 +29,7 @@ class Boggle {
   }
 
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
+  public static final int FLASH = 2000;
 
   public static final int WIDTH = 400;
   public static final int BUTTONS_SIZE = 235;
@@ -202,6 +203,7 @@ class Boggle {
       b.setEnabled(false);
     }
     submit.setEnabled(false);
+    showMessage("Game over.", Color.gray);
   }
 
   private boolean inGame() {
@@ -252,12 +254,16 @@ class Boggle {
     t.start();
   }
 
+  private void showMessage(String msg, Color color, int millis) {
+    showMessage(msg, color);
+    var t = new Timer(millis, e -> message.setText(""));
+    t.setRepeats(false);
+    t.start();
+  }
+
   private void showMessage(String msg, Color color) {
     message.setForeground(color);
     message.setText(msg);
-    var t = new Timer(2000, e -> message.setText(""));
-    t.setRepeats(false);
-    t.start();
   }
 
   private void startClock() {
@@ -282,17 +288,17 @@ class Boggle {
     }
   }
 
-  void submitThisWord(String word) {
+  void submitWord(String word) {
     if (inGame()) {
       if (word.length() > 0) {
-        if (words.wasUsed(word)) {
-          showMessage("“" + word + "” already used.", Color.red);
+        if (words.alreadyUsed(word)) {
+          showMessage("“" + word + "” already used.", Color.red, FLASH);
         } else if (words.isWord(word)) {
-          showMessage("“" + word + "” is good!", Color.blue);
+          showMessage("“" + word + "” is good!", Color.blue, FLASH);
           updateScore(score.scoreWord(word));
           words.use(word);
         } else {
-          showMessage("“" + word + "” not in word list.", Color.red);
+          showMessage("“" + word + "” not in word list.", Color.red, FLASH);
         }
         resetLetterButtons();
       }

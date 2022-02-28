@@ -9,8 +9,9 @@ import java.util.stream.IntStream;
 import javax.swing.JButton;
 
 /*
- * Handle key events and determine whether they could have been
- * entered via button presses.
+ * Handle virtual keyboard, both key events and letter button presses,
+ * to determine what words are being entered. Key presses are checked
+ * to make sure they could have been entered via legal button presses.
  */
 class Keyboard {
 
@@ -50,7 +51,7 @@ class Keyboard {
   public void enter() {
     if (!currentPossibilities.isEmpty()) {
       System.out.println("Can process word: " + getWord());
-      this.boggle.submitThisWord(getWord());
+      this.boggle.submitWord(getWord());
     } else {
       System.out.println("No possible paths to: " + getWord());
     }
@@ -69,7 +70,6 @@ class Keyboard {
   }
 
   private void highlightButtons(JButton[] buttons) {
-    showPossibilities();
     boggle.resetLetterButtons();
     for (var possibility : currentPossibilities) {
       for (var p : possibility) {
