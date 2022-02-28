@@ -31,6 +31,10 @@ class Keyboard {
     if (text != null) {
       currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
       updateWord(text, buttons);
+    } else {
+      if (afterQ) {
+        boggle.showMessage(getWord() + "q", Color.black);
+      }
     }
   }
 
