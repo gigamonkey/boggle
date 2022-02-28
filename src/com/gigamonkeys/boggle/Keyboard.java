@@ -29,28 +29,10 @@ class Keyboard {
   }
 
   public void letter(String letter, JButton[] buttons) {
-    String text = null;
-
-    // Tiny state machine to deal with Qu.
-    boolean isQ = letter.equalsIgnoreCase("q");
-    if (afterQ && letter.equalsIgnoreCase("u")) {
-      text = "qu";
-    } else if (!isQ) {
-      text = letter;
-    }
-    System.out.println("letter: " + letter + "; afterQ: " + afterQ + "; text: " + text);
-    afterQ = isQ;
-
+    var text = letterToText(letter);
     if (text != null) {
       currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
       currentWord.append(text);
-    }
-
-    if (currentPossibilities.size() == 0) {
-      // Maybe report not a legal word (shake the whole board or something.)
-      System.out.println("No longer any possibilites.");
-    } else {
-      System.out.println("Current possibilites: " + currentPossibilities.size());
     }
   }
 
@@ -77,6 +59,21 @@ class Keyboard {
       .stream()
       .flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p)))
       .toList();
+  }
+
+  private String letterToText(String letter) {
+    String text = null;
+
+    // Tiny state machine to deal with Qu face.
+    boolean isQ = letter.equalsIgnoreCase("q");
+    if (afterQ && letter.equalsIgnoreCase("u")) {
+      text = "qu";
+    } else if (!isQ) {
+      text = letter;
+    }
+    System.out.println("letter: " + letter + "; afterQ: " + afterQ + "; text: " + text);
+    afterQ = isQ;
+    return text;
   }
 
   private List<Point> appending(List<Point> path, Point p) {
