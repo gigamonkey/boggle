@@ -1,5 +1,6 @@
 package com.gigamonkeys.boggle;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,12 +26,6 @@ class Keyboard {
     currentPossibilities = List.of(Collections.emptyList());
   }
 
-  public void reset() {
-    currentPossibilities = List.of(Collections.emptyList());
-    currentWord.delete(0, currentWord.length());
-    boggle.resetLetterButtons();
-  }
-
   public void letterTyped(String letter, JButton[] buttons) {
     var text = letterToText(letter);
     if (text != null) {
@@ -50,15 +45,20 @@ class Keyboard {
 
   public void enter() {
     if (!currentPossibilities.isEmpty()) {
-      System.out.println("Can process word: " + getWord());
       this.boggle.submitWord(getWord());
     } else {
-      System.out.println("No possible paths to: " + getWord());
+      boggle.showMessage("Can't make " + getWord(), Color.RED, boggle.FLASH);
     }
     reset();
   }
 
-  String getWord() {
+  private void reset() {
+    currentPossibilities = List.of(Collections.emptyList());
+    currentWord.delete(0, currentWord.length());
+    boggle.resetLetterButtons();
+  }
+
+  private String getWord() {
     return currentWord.toString().toLowerCase();
   }
 
@@ -121,11 +121,11 @@ class Keyboard {
   }
 
   private boolean ok(Point p, List<Point> path) {
-    return legalMove(path, path.size() > 0 ? path.get(path.size() - 1) : null, p);
+    return path.isEmpty() || legalMove(path, path.get(path.size() - 1), p);
   }
 
   private boolean legalMove(List<Point> path, Point previous, Point p) {
-    return (!path.contains(p) && (previous == null || adjacent(previous, p)));
+    return !path.contains(p) && adjacent(previous, p);
   }
 
   private boolean adjacent(Point p1, Point p2) {

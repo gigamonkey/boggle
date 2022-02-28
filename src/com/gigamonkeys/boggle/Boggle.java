@@ -254,7 +254,7 @@ class Boggle {
     t.start();
   }
 
-  private void showMessage(String msg, Color color, int millis) {
+  void showMessage(String msg, Color color, int millis) {
     showMessage(msg, color);
     var t = new Timer(millis, e -> message.setText(""));
     t.setRepeats(false);
