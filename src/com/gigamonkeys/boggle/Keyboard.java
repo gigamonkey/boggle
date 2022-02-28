@@ -121,6 +121,14 @@ class Keyboard {
   }
 
   private boolean ok(Point p, List<Point> path) {
-    return Words.legalMove(path, path.size() > 0 ? path.get(path.size() - 1) : null, p);
+    return legalMove(path, path.size() > 0 ? path.get(path.size() - 1) : null, p);
+  }
+
+  private boolean legalMove(List<Point> path, Point previous, Point p) {
+    return (!path.contains(p) && (previous == null || adjacent(previous, p)));
+  }
+
+  private boolean adjacent(Point p1, Point p2) {
+    return Math.abs(p1.x - p2.x) <= 1 && Math.abs(p1.y - p2.y) <= 1;
   }
 }
