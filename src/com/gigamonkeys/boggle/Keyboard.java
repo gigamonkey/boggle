@@ -42,7 +42,7 @@ class Keyboard {
     if (text != null) {
       Set<Point> possible = new HashSet<>();
       for (var i = 0; i < buttons.length; i++) {
-        if (buttons[i].getText().equalsIgnoreCase(letter)) {
+        if (buttons[i].getText().equalsIgnoreCase(text)) {
           possible.add(new Point(i % 4, i / 4));
         }
       }
