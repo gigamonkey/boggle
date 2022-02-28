@@ -24,8 +24,8 @@ class Words {
     System.out.println(words.size() + " words loaded.");
   }
 
-  private Set<String> usedWords = new HashSet<String>();
-  private Set<Point> usedDice = new HashSet<Point>();
+  private Set<String> usedWords = new HashSet<>();
+  private Set<Point> usedDice = new HashSet<>();
   private Point lastPress = null;
   private StringBuilder currentWord = new StringBuilder();
 
