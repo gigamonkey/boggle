@@ -227,6 +227,13 @@ class Boggle {
     b.setBorder(whiteline);
   }
 
+
+  void resetLetterButtons() {
+    for (var b : letterButtons) {
+      resetLetterButton(b);
+    }
+  }
+
   void resetLetterButton(JButton b) {
     b.setBorder(defaultBorder);
     b.setBackground(defaultButtonColor);
@@ -277,6 +284,7 @@ class Boggle {
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);
+      resetLetterButton(letterButtons[i]);
     }
   }
 
@@ -299,12 +307,6 @@ class Boggle {
         words.clearWord();
         resetLetterButtons();
       }
-    }
-  }
-
-  void resetLetterButtons() {
-    for (var b : letterButtons) {
-      resetLetterButton(b);
     }
   }
 }
