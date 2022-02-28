@@ -20,7 +20,8 @@ class Words {
   static {
     var resource = Boggle.class.getResourceAsStream("word-list.txt");
     var reader = new BufferedReader(new InputStreamReader(resource, StandardCharsets.UTF_8));
-    words = reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
+    words =
+      reader.lines().map(line -> line.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
     System.out.println(words.size() + " words loaded.");
   }
 

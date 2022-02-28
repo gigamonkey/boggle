@@ -72,7 +72,10 @@ class Keyboard {
 
   private void updatePossibilities(Set<Point> possible) {
     currentPossibilities =
-      currentPossibilities.stream().flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p))).toList();
+      currentPossibilities
+        .stream()
+        .flatMap(path -> possible.stream().filter(p -> ok(p, path)).map(p -> appending(path, p)))
+        .toList();
     System.out.println("Current possibilites: " + currentPossibilities.size());
   }
 
