@@ -204,6 +204,10 @@ class Boggle {
     submit.setEnabled(false);
   }
 
+  private boolean inGame() {
+    return System.currentTimeMillis() < endOfGame;
+  }
+
   private void dieClicked(Point p, JButton b) {
     if (words.legal(p)) {
       words.addToWord(b.getText(), p);
@@ -267,18 +271,20 @@ class Boggle {
   }
 
   void submitThisWord(String word) {
-    if (word.length() > 0) {
-      if (words.wasUsed(word)) {
-        showMessage("“" + word + "” already used.", Color.red);
-      } else if (words.isWord(word)) {
-        showMessage("“" + word + "” is good!", Color.blue);
-        updateScore(score.scoreWord(word));
-        words.use(word);
-      } else {
-        showMessage("“" + word + "” not in word list.", Color.red);
+    if (inGame()) {
+      if (word.length() > 0) {
+        if (words.wasUsed(word)) {
+          showMessage("“" + word + "” already used.", Color.red);
+        } else if (words.isWord(word)) {
+          showMessage("“" + word + "” is good!", Color.blue);
+          updateScore(score.scoreWord(word));
+          words.use(word);
+        } else {
+          showMessage("“" + word + "” not in word list.", Color.red);
+        }
+        words.clearWord();
+        resetLetterButtons();
       }
-      words.clearWord();
-      resetLetterButtons();
     }
   }
 
