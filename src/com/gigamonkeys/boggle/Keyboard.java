@@ -62,18 +62,19 @@ class Keyboard {
   }
 
   private String letterToText(String letter) {
-    String text = null;
-
     // Tiny state machine to deal with Qu face.
     boolean isQ = letter.equalsIgnoreCase("q");
-    if (afterQ && letter.equalsIgnoreCase("u")) {
-      text = "qu";
-    } else if (!isQ) {
-      text = letter;
+    try {
+      if (afterQ && letter.equalsIgnoreCase("u")) {
+        return "qu";
+      } else if (!isQ) {
+        return letter;
+      } else {
+        return null;
+      }
+    } finally {
+      afterQ = isQ;
     }
-    System.out.println("letter: " + letter + "; afterQ: " + afterQ + "; text: " + text);
-    afterQ = isQ;
-    return text;
   }
 
   private List<Point> appending(List<Point> path, Point p) {
