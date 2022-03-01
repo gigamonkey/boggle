@@ -16,6 +16,7 @@ class Words {
   // Wordlist combined from:
   // https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   // https://www.wordgamedictionary.com/twl06/download/twl06.txt
+  // https://www.luke-g.com/boggle/
   private static final Set<String> words;
 
   static {
