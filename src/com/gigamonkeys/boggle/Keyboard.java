@@ -40,8 +40,12 @@ class Keyboard {
 
   public void letterPressed(Point p, JButton[] buttons) {
     var i = p.y * 4 + p.x;
-    currentPossibilities = updatedPossibilities(new int[] { i });
-    updateWord(buttons[i].getText(), buttons);
+    if (pressPossible(p)) {
+      currentPossibilities = updatedPossibilities(new int[] { i });
+      updateWord(buttons[i].getText(), buttons);
+    } else {
+      boggle.shakeButton(buttons[i]);
+    }
   }
 
   public void enter() {
@@ -108,6 +112,13 @@ class Keyboard {
           .map(p -> appending(path, p))
       )
       .toList();
+  }
+
+  private boolean pressPossible(Point p) {
+    for (var path : currentPossibilities) {
+      if (ok(p, path)) return true;
+    }
+    return false;
   }
 
   private String letterToText(String letter) {

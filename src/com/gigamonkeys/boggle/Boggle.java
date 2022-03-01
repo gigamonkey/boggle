@@ -235,7 +235,7 @@ class Boggle {
     b.setBackground(defaultButtonColor);
   }
 
-  private void shakeButton(JButton b) {
+  void shakeButton(JButton b) {
     final var end = System.currentTimeMillis() + 200;
     final var start = b.getLocation();
     Timer t = new Timer(
