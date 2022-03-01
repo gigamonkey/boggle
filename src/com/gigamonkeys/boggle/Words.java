@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 class Words {
 
   // Wordlist from https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
+  // and https://www.wordgamedictionary.com/twl06/download/twl06.txt
   private static final Set<String> words;
 
   static {
