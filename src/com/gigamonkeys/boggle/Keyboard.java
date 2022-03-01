@@ -33,6 +33,8 @@ class Keyboard {
       updateWord(text, buttons);
     } else {
       if (afterQ) {
+        // Because we don't officiall process the Q until we see the U
+        // we need to go ahead and update the UI anyway.
         boggle.showMessage(getWord() + "q", Color.black);
       }
     }
@@ -115,10 +117,7 @@ class Keyboard {
   }
 
   private boolean pressPossible(Point p) {
-    for (var path : currentPossibilities) {
-      if (ok(p, path)) return true;
-    }
-    return false;
+    return currentPossibilities.stream().anyMatch(path -> ok(p, path));
   }
 
   private String letterToText(String letter) {
