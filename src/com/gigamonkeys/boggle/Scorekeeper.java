@@ -3,7 +3,7 @@ package com.gigamonkeys.boggle;
 /**
  * Keep track of the current score and apply the scoring rules.
  */
-class Score {
+class Scorekeeper {
 
   // From https://www.hasbro.com/common/instruct/boggle.pdf
   private static final int[] scores = { 1, 1, 2, 3, 5, 11 };

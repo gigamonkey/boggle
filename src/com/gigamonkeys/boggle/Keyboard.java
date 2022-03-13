@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import javax.swing.JButton;
 
-/*
+/**
  * Handle virtual keyboard, both key events and letter button presses,
  * to determine what words are being entered. Key presses are checked
  * to make sure they could have been entered via legal button presses.

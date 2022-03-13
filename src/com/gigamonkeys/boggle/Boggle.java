@@ -22,6 +22,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.Border;
 
+/**
+ * Main Boggle program. Sets up the UI.
+ */
 class Boggle {
 
   public static void main(String[] args) {
@@ -75,26 +78,23 @@ class Boggle {
   }
 
   private void setupKeyMap(JFrame frame) {
+    for (var c : "abcdefghijklmnopqrstuvwxyz".toCharArray()) {
+      final String letter = "" + c;
+      bind(frame, KeyStroke.getKeyStroke(c), () -> keyboard.letterTyped(letter, letterButtons));
+    }
+    bind(frame, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), () -> keyboard.enter());
+  }
+
+  private void bind(JFrame frame, KeyStroke ks, Runnable action) {
     var keys = frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
     var actions = frame.getRootPane().getActionMap();
-    for (var c : "abcdefghijklmnopqrstuvwxyz".toCharArray()) {
-      keys.put(KeyStroke.getKeyStroke(c), "letter");
-    }
-    keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
-
+    var link = new Object();
+    keys.put(ks, link);
     actions.put(
-      "letter",
+      link,
       new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
-          keyboard.letterTyped(e.getActionCommand(), letterButtons);
-        }
-      }
-    );
-    actions.put(
-      "enter",
-      new AbstractAction() {
-        public void actionPerformed(ActionEvent e) {
-          keyboard.enter();
+          action.run();
         }
       }
     );
@@ -138,7 +138,7 @@ class Boggle {
   }
 
   private JPanel dicePanel() {
-    JPanel panel = new JPanel(new GridLayout(4, 4));
+    var panel = new JPanel(new GridLayout(4, 4));
     panel.setOpaque(false);
 
     Dimension d = new Dimension(BUTTONS_SIZE, BUTTONS_SIZE);
@@ -280,7 +280,7 @@ class Boggle {
   }
 
   private void resetDice(boolean enable) {
-    var labels = dice.faces();
+    var labels = dice.faces(Dice.MODERN);
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);

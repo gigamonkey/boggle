@@ -1,7 +1,7 @@
 package com.gigamonkeys.boggle;
 
-import static com.gigamonkeys.boggle.Util.shuffledList;
-
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -11,10 +11,10 @@ import java.util.Random;
  */
 class Dice {
 
-  private static final Random r = new Random();
+  private static final Random random = new Random();
 
   // From http://www.bananagrammer.com/2013/10/the-boggle-cube-redesign-and-its-effect.html
-  private static final String[] CLASSIC = {
+  public static final String[] CLASSIC = {
     "AACIOT",
     "ABILTY",
     "ABJMOQu",
@@ -52,7 +52,10 @@ class Dice {
     "HLNNRZ",
   };
 
-  List<String> faces() {
-    return shuffledList(MODERN).stream().map(s -> s.split("", 6)[r.nextInt(6)]).toList();
+  List<String> faces(String[] set) {
+    List<String> list = Arrays.asList(set.clone());
+    Collections.shuffle(list, random);
+    return list.stream().map(s -> s.split("", 6)[random.nextInt(6)]).toList();
   }
+
 }
