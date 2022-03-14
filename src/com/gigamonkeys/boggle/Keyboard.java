@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
-import javax.swing.JButton;
 
 /**
  * Handle virtual keyboard, both key events and letter button presses,
@@ -17,36 +15,43 @@ import javax.swing.JButton;
 class Keyboard {
 
   private final Boggle boggle;
-  private List<List<Point>> currentPossibilities;
-  private boolean afterQ = false;
   private StringBuilder currentWord = new StringBuilder();
+  private List<List<Point>> currentPossibilities = List.of(Collections.emptyList());
+  private boolean afterQ = false;
 
   Keyboard(Boggle boggle) {
     this.boggle = boggle;
-    currentPossibilities = List.of(Collections.emptyList());
   }
 
-  public void letterTyped(String letter, JButton[] buttons) {
+  /**
+   * The given letter was typed (presumably on a keyoard). Figure out
+   * if it could possibly be entered via the current dice.
+   */
+  public void letterTyped(String letter) {
     var text = letterToText(letter);
     if (text != null) {
-      currentPossibilities = updatedPossibilities(possibleButtons(text, buttons));
-      updateWord(text, buttons);
+      // Text is null when Q is typed. We will process the text once
+      // we get the U.
+      currentPossibilities = updatedPossibilities(boggle.diceFor(text));
+      updateWord(text);
     } else {
       if (afterQ) {
-        // Because we don't officiall process the Q until we see the U
-        // we need to go ahead and update the UI anyway.
+        // Because we don't process the Q until we see the U we need
+        // to go ahead and update the UI anyway.
         boggle.showMessage(getWord() + "q", Color.black);
       }
     }
   }
 
-  public void letterPressed(Point p, JButton[] buttons) {
-    var i = p.y * 4 + p.x;
-    if (pressPossible(p)) {
-      currentPossibilities = updatedPossibilities(new int[] { i });
-      updateWord(buttons[i].getText(), buttons);
+  /**
+   * The given text was choosen by clicking the die at Point p.
+   */
+  public void letterPressed(Point p, String text) {
+    if (isPressPossible(p)) {
+      currentPossibilities = updatedPossibilities(new Point[] { p });
+      updateWord(text);
     } else {
-      boggle.shakeButton(buttons[i]);
+      boggle.illegalPress(p);
     }
   }
 
@@ -54,20 +59,20 @@ class Keyboard {
     if (!currentPossibilities.isEmpty()) {
       this.boggle.submitWord(getWord());
     } else {
-      boggle.showMessage("Can't make " + getWord(), Color.red, boggle.FLASH);
+      boggle.flashMessage("Can't make " + getWord(), Color.red);
     }
-    reset();
+    resetWord();
   }
 
-  private void updateWord(String text, JButton[] buttons) {
+  private void updateWord(String text) {
     currentWord.append(text);
-    highlightButtons(buttons);
+    boggle.highlightButtons(currentPossibilities);
     boggle.showMessage(getWord(), Color.black);
   }
 
-  private void reset() {
-    currentPossibilities = List.of(Collections.emptyList());
+  private void resetWord() {
     currentWord.delete(0, currentWord.length());
+    currentPossibilities = List.of(Collections.emptyList());
     boggle.resetLetterButtons();
   }
 
@@ -75,48 +80,14 @@ class Keyboard {
     return currentWord.toString().toLowerCase();
   }
 
-  private void showPossibilities() {
-    System.out.println("Possibilities:");
-    for (var p : currentPossibilities) {
-      System.out.println("  " + p);
-    }
-  }
-
-  private void highlightButtons(JButton[] buttons) {
-    boggle.resetLetterButtons();
-    for (var possibility : currentPossibilities) {
-      for (var i = 0; i < possibility.size(); i++) {
-        var p = possibility.get(i);
-        if (i == possibility.size() - 1) {
-          boggle.highlightLetterButton(buttons[p.y * 4 + p.x]);
-        } else {
-          boggle.lowlightLetterButton(buttons[p.y * 4 + p.x]);
-        }
-      }
-    }
-  }
-
-  private int[] possibleButtons(String text, JButton[] buttons) {
-    return IntStream
-      .range(0, buttons.length)
-      .filter(i -> buttons[i].getText().equalsIgnoreCase(text))
-      .toArray();
-  }
-
-  private List<List<Point>> updatedPossibilities(int[] possible) {
+  private List<List<Point>> updatedPossibilities(Point[] points) {
     return currentPossibilities
       .stream()
-      .flatMap(path ->
-        Arrays
-          .stream(possible)
-          .mapToObj(i -> new Point(i % 4, i / 4))
-          .filter(p -> ok(p, path))
-          .map(p -> appending(path, p))
-      )
+      .flatMap(path -> Arrays.stream(points).filter(p -> ok(p, path)).map(p -> appending(path, p)))
       .toList();
   }
 
-  private boolean pressPossible(Point p) {
+  private boolean isPressPossible(Point p) {
     return currentPossibilities.stream().anyMatch(path -> ok(p, path));
   }
 

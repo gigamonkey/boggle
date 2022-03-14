@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.List;
+import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -32,7 +34,7 @@ class Boggle {
   }
 
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
-  public static final int FLASH = 2000;
+  public static final int FLASH_MILLIS = 2000;
 
   public static final int WIDTH = 400;
   public static final int BUTTONS_SIZE = 235;
@@ -44,7 +46,7 @@ class Boggle {
   private static Border defaultBorder = null;
   private static Color defaultButtonColor = null;
 
-  private final Score score = new Score();
+  private final Scorekeeper score = new Scorekeeper();
   private final Words words = new Words();
   private final Dice dice = new Dice();
   private final Timer clockTimer = new Timer(1000, e -> updateClock());
@@ -61,6 +63,87 @@ class Boggle {
   Boggle() {
     clockTimer.setInitialDelay(0);
   }
+
+  public Point[] diceFor(String text) {
+    return IntStream
+      .range(0, letterButtons.length)
+      .filter(i -> letterButtons[i].getText().equalsIgnoreCase(text))
+      .mapToObj(i -> new Point(i % 4, i / 4))
+      .toArray(Point[]::new);
+  }
+
+  public void highlightButtons(List<List<Point>> currentPossibilities) {
+    resetLetterButtons();
+    for (var possibility : currentPossibilities) {
+      for (var i = 0; i < possibility.size(); i++) {
+        var p = possibility.get(i);
+        if (i == possibility.size() - 1) {
+          highlightLetterButton(letterButtons[p.y * 4 + p.x]);
+        } else {
+          lowlightLetterButton(letterButtons[p.y * 4 + p.x]);
+        }
+      }
+    }
+  }
+
+  public void resetLetterButtons() {
+    for (var b : letterButtons) {
+      resetLetterButton(b);
+    }
+  }
+
+  public void illegalPress(Point p) {
+    var i = p.y * 4 + p.x;
+    var b = letterButtons[i];
+    var end = System.currentTimeMillis() + 200;
+    var start = b.getLocation();
+    Timer t = new Timer(
+      64,
+      e -> {
+        if (System.currentTimeMillis() < end) {
+          var s = b.getLocation().x >= start.x ? -1 : 1;
+          b.setLocation(start.x + (2 * s), start.y);
+        } else {
+          b.setLocation(start);
+          ((Timer) e.getSource()).stop();
+        }
+      }
+    );
+    t.setInitialDelay(0);
+    t.start();
+  }
+
+  public void flashMessage(String msg, Color color) {
+    showMessage(msg, color);
+    var t = new Timer(FLASH_MILLIS, e -> message.setText(""));
+    t.setRepeats(false);
+    t.start();
+  }
+
+  public void showMessage(String msg, Color color) {
+    message.setForeground(color);
+    message.setText(msg);
+  }
+
+  public void submitWord(String word) {
+    if (inGame()) {
+      if (word.length() > 0) {
+        if (words.alreadyUsed(word)) {
+          flashMessage("“" + word + "” already used.", Color.red);
+        } else if (words.isWord(word)) {
+          flashMessage("“" + word + "” is good!", Color.blue);
+          updateScore(score.scoreWord(word));
+          words.use(word);
+        } else {
+          flashMessage("“" + word + "” not in word list.", Color.red);
+        }
+        resetLetterButtons();
+      }
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////
+  // Setup the UI
 
   private void makeFrame() {
     JFrame frame = new JFrame("Boggle");
@@ -80,7 +163,7 @@ class Boggle {
   private void setupKeyMap(JFrame frame) {
     for (var c : "abcdefghijklmnopqrstuvwxyz".toCharArray()) {
       final String letter = "" + c;
-      bind(frame, KeyStroke.getKeyStroke(c), () -> keyboard.letterTyped(letter, letterButtons));
+      bind(frame, KeyStroke.getKeyStroke(c), () -> keyboard.letterTyped(letter));
     }
     bind(frame, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), () -> keyboard.enter());
   }
@@ -146,9 +229,9 @@ class Boggle {
     panel.setMaximumSize(d);
 
     for (var i = 0; i < 16; i++) {
-      final var p = new Point(i % 4, i / 4);
-      final var b = new JButton("");
-      b.addActionListener(e -> dieClicked(p, b));
+      var p = new Point(i % 4, i / 4);
+      var b = new JButton("");
+      b.addActionListener(e -> keyboard.letterPressed(p, b.getText()));
       b.setEnabled(false);
       b.setOpaque(true);
       if (defaultBorder == null) {
@@ -210,60 +293,9 @@ class Boggle {
     return System.currentTimeMillis() < endOfGame;
   }
 
-  private void dieClicked(Point p, JButton b) {
-    keyboard.letterPressed(p, letterButtons);
-  }
-
-  void highlightLetterButton(JButton b) {
-    b.setBackground(Color.gray);
-    b.setBorder(whiteline);
-  }
-
-  void lowlightLetterButton(JButton b) {
-    b.setBackground(Color.lightGray);
-    b.setBorder(whiteline);
-  }
-
-  void resetLetterButtons() {
-    for (var b : letterButtons) {
-      resetLetterButton(b);
-    }
-  }
-
-  void resetLetterButton(JButton b) {
+  private void resetLetterButton(JButton b) {
     b.setBorder(defaultBorder);
     b.setBackground(defaultButtonColor);
-  }
-
-  void shakeButton(JButton b) {
-    final var end = System.currentTimeMillis() + 200;
-    final var start = b.getLocation();
-    Timer t = new Timer(
-      64,
-      e -> {
-        if (System.currentTimeMillis() < end) {
-          var s = b.getLocation().x >= start.x ? -1 : 1;
-          b.setLocation(start.x + (2 * s), start.y);
-        } else {
-          b.setLocation(start);
-          ((Timer) e.getSource()).stop();
-        }
-      }
-    );
-    t.setInitialDelay(0);
-    t.start();
-  }
-
-  void showMessage(String msg, Color color, int millis) {
-    showMessage(msg, color);
-    var t = new Timer(millis, e -> message.setText(""));
-    t.setRepeats(false);
-    t.start();
-  }
-
-  void showMessage(String msg, Color color) {
-    message.setForeground(color);
-    message.setText(msg);
   }
 
   private void startClock() {
@@ -288,20 +320,13 @@ class Boggle {
     }
   }
 
-  void submitWord(String word) {
-    if (inGame()) {
-      if (word.length() > 0) {
-        if (words.alreadyUsed(word)) {
-          showMessage("“" + word + "” already used.", Color.red, FLASH);
-        } else if (words.isWord(word)) {
-          showMessage("“" + word + "” is good!", Color.blue, FLASH);
-          updateScore(score.scoreWord(word));
-          words.use(word);
-        } else {
-          showMessage("“" + word + "” not in word list.", Color.red, FLASH);
-        }
-        resetLetterButtons();
-      }
-    }
+  private void highlightLetterButton(JButton b) {
+    b.setBackground(Color.gray);
+    b.setBorder(whiteline);
+  }
+
+  private void lowlightLetterButton(JButton b) {
+    b.setBackground(Color.lightGray);
+    b.setBorder(whiteline);
   }
 }

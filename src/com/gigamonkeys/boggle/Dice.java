@@ -57,5 +57,4 @@ class Dice {
     Collections.shuffle(list, random);
     return list.stream().map(s -> s.split("", 6)[random.nextInt(6)]).toList();
   }
-
 }
