@@ -61,29 +61,19 @@ class Keyboard {
     return !currentPossibilities.isEmpty();
   }
 
-  public void enter() {
-    if (stillPossible()) {
-      boggle.submitWord(getWord());
-    } else {
-      boggle.flashMessage("Can't make " + getWord(), Color.red);
-    }
-    resetWord();
+  public void resetWord() {
+    currentWord.delete(0, currentWord.length());
+    currentPossibilities = List.of(Collections.emptyList());
+  }
+
+  public String getWord() {
+    return currentWord.toString().toLowerCase();
   }
 
   private void updateWord(String text) {
     currentWord.append(text);
     boggle.highlightButtons(currentPossibilities);
     boggle.showMessage(getWord(), Color.black);
-  }
-
-  private void resetWord() {
-    currentWord.delete(0, currentWord.length());
-    currentPossibilities = List.of(Collections.emptyList());
-    boggle.resetLetterButtons();
-  }
-
-  private String getWord() {
-    return currentWord.toString().toLowerCase();
   }
 
   private List<List<Point>> updatedPossibilities(Point[] points) {

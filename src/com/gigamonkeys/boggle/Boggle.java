@@ -146,7 +146,7 @@ class Boggle {
       final String letter = "" + c;
       bind(frame, KeyStroke.getKeyStroke(c), () -> keyboard.letterTyped(letter));
     }
-    bind(frame, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), () -> keyboard.enter());
+    bind(frame, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), () -> enter());
   }
 
   private void bind(JFrame frame, KeyStroke ks, Runnable action) {
@@ -231,6 +231,16 @@ class Boggle {
     }
   }
 
+  private void enter() {
+    if (keyboard.stillPossible()) {
+      submitWord(keyboard.getWord());
+    } else {
+      flashMessage("Can't make " + keyboard.getWord(), Color.red);
+    }
+    keyboard.resetWord();
+    resetLetterButtons();
+  }
+
   private void illegalPress(Point p) {
     var i = p.y * 4 + p.x;
     var b = letterButtons[i];
@@ -256,7 +266,7 @@ class Boggle {
     Dimension d = new Dimension((int) (BUTTONS_SIZE * 0.95), 20);
     submit.setPreferredSize(d);
     submit.setMaximumSize(d);
-    submit.addActionListener(e -> keyboard.enter());
+    submit.addActionListener(e -> enter());
     submit.setEnabled(false);
     submit.setAlignmentX(Component.CENTER_ALIGNMENT);
     return submit;
