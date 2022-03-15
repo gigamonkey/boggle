@@ -1,11 +1,11 @@
 package com.gigamonkeys.boggle;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Handle virtual keyboard, both key events and letter button presses,
@@ -14,13 +14,13 @@ import java.util.List;
  */
 class Keyboard {
 
-  private final Boggle boggle;
   private StringBuilder currentWord = new StringBuilder();
   private List<List<Point>> currentPossibilities = List.of(Collections.emptyList());
   private boolean afterQ = false;
+  private List<String> dice;
 
-  Keyboard(Boggle boggle) {
-    this.boggle = boggle;
+  public void setDice(List<String> dice) {
+    this.dice = dice;
   }
 
   /**
@@ -32,29 +32,24 @@ class Keyboard {
     if (text != null) {
       // Text is null when Q is typed. We will process the text once
       // we get the U.
-      currentPossibilities = updatedPossibilities(boggle.diceFor(text));
-      updateWord(text);
-    } else {
-      if (afterQ) {
-        // Because we don't process the Q until we see the U we need
-        // to go ahead and update the UI anyway.
-        boggle.showMessage(getWord() + "q", Color.black);
-      }
+      currentPossibilities = updatedPossibilities(diceFor(text));
+      currentWord.append(text);
     }
   }
 
   /**
-   * The given text was choosen by clicking the die at Point p. Return
-   * false if it's not a legal press.
+   * The given text was choosen by clicking the die at Point p.
    */
-  public boolean letterPressed(Point p, String text) {
+  public void letterPressed(Point p, String text) {
+    // We could depend on the caller to check isPressPossible before calling us, perhaps.
     if (isPressPossible(p)) {
       currentPossibilities = updatedPossibilities(new Point[] { p });
-      updateWord(text);
-      return true;
-    } else {
-      return false;
+      currentWord.append(text);
     }
+  }
+
+  public boolean isPressPossible(Point p) {
+    return currentPossibilities.stream().anyMatch(path -> ok(p, path));
   }
 
   public boolean stillPossible() {
@@ -67,13 +62,21 @@ class Keyboard {
   }
 
   public String getWord() {
-    return currentWord.toString().toLowerCase();
+    // This method is used for displaying the word being built so we
+    // include the Q before it has actually been processed.
+    return currentWord.toString().toLowerCase() + (afterQ ? "q" : "");
   }
 
-  private void updateWord(String text) {
-    currentWord.append(text);
-    boggle.highlightButtons(currentPossibilities);
-    boggle.showMessage(getWord(), Color.black);
+  public List<List<Point>> getPossibilities() {
+    return currentPossibilities;
+  }
+
+  private Point[] diceFor(String text) {
+    return IntStream
+      .range(0, dice.size())
+      .filter(i -> dice.get(i).equalsIgnoreCase(text))
+      .mapToObj(i -> new Point(i % 4, i / 4))
+      .toArray(Point[]::new);
   }
 
   private List<List<Point>> updatedPossibilities(Point[] points) {
@@ -81,10 +84,6 @@ class Keyboard {
       .stream()
       .flatMap(path -> Arrays.stream(points).filter(p -> ok(p, path)).map(p -> appending(path, p)))
       .toList();
-  }
-
-  private boolean isPressPossible(Point p) {
-    return currentPossibilities.stream().anyMatch(path -> ok(p, path));
   }
 
   private String letterToText(String letter) {

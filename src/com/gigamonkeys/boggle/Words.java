@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Manage the list of legal words and track guessed words, determining
@@ -27,19 +28,23 @@ class Words {
 
   private Set<String> usedWords = new HashSet<>();
 
-  boolean isWord(String word) {
+  public boolean isWord(String word) {
     return word.length() >= 3 && words.contains(word);
   }
 
-  void use(String word) {
+  public void use(String word) {
     usedWords.add(word);
   }
 
-  boolean alreadyUsed(String word) {
+  public boolean alreadyUsed(String word) {
     return usedWords.contains(word);
   }
 
-  void reset() {
+  public Stream<String> words() {
+    return words.stream();
+  }
+
+  public void reset() {
     usedWords.clear();
   }
 }

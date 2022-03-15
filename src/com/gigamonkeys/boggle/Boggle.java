@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
@@ -50,7 +51,7 @@ class Boggle {
   private final Words words = new Words();
   private final Dice dice = new Dice();
   private final Timer clockTimer = new Timer(1000, e -> updateClock());
-  private final Keyboard keyboard = new Keyboard(this);
+  private final Keyboard keyboard = new Keyboard();
 
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
@@ -58,6 +59,7 @@ class Boggle {
   private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
+  private List<String> currentFaces = Collections.emptyList();
   private long endOfGame = System.currentTimeMillis();
 
   Boggle() {
@@ -144,7 +146,7 @@ class Boggle {
   private void setupKeyMap(JFrame frame) {
     for (var c : "abcdefghijklmnopqrstuvwxyz".toCharArray()) {
       final String letter = "" + c;
-      bind(frame, KeyStroke.getKeyStroke(c), () -> keyboard.letterTyped(letter));
+      bind(frame, KeyStroke.getKeyStroke(c), () -> letterTyped(letter));
     }
     bind(frame, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), () -> enter());
   }
@@ -226,9 +228,17 @@ class Boggle {
   }
 
   private void buttonPressed(Point p, String text) {
-    if (!keyboard.letterPressed(p, text)) {
+    if (keyboard.isPressPossible(p)) {
+      keyboard.letterPressed(p, text);
+    } else {
       illegalPress(p);
     }
+  }
+
+  private void letterTyped(String letter) {
+    keyboard.letterTyped(letter);
+    highlightButtons(keyboard.getPossibilities());
+    showMessage(keyboard.getWord(), Color.black);
   }
 
   private void enter() {
@@ -331,6 +341,7 @@ class Boggle {
 
   private void resetDice(boolean enable) {
     var labels = dice.faces(Dice.MODERN);
+    keyboard.setDice(labels);
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(labels.get(i));
       letterButtons[i].setEnabled(enable);
