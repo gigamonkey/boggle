@@ -10,9 +10,16 @@ class Scorekeeper {
 
   private int score = 0;
 
-  int scoreWord(String w) {
-    score += scores[Math.min(w.length(), 8) - 3];
+  void addPoints(String w) {
+    score += scoreWord(w);
+  }
+
+  int getScore() {
     return score;
+  }
+
+  int scoreWord(String w) {
+    return w.length() > 2 ? scores[Math.min(w.length(), 8) - 3] : 0;
   }
 
   void reset() {

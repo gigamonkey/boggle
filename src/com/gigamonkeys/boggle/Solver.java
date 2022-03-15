@@ -17,7 +17,6 @@ class Solver {
   }
 
   public Stream<String> legalWords() {
-    System.out.println("Finding legal words.");
     return words.words().filter(w -> w.length() > 0 && legal(w));
   }
 

@@ -54,11 +54,12 @@ class Boggle {
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
   private final JLabel clock = new JLabel("0:00", SwingConstants.LEFT);
-  private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
+  private final JLabel scoreboard = new JLabel("Score: 0 of 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
   private long endOfGame = System.currentTimeMillis();
   private Keyboard keyboard = null;
+  private int maxScore;
 
   Boggle() {
     clockTimer.setInitialDelay(0);
@@ -113,7 +114,8 @@ class Boggle {
           flashMessage("“" + word + "” already used.", Color.red);
         } else if (words.isWord(word)) {
           flashMessage("“" + word + "” is good!", Color.blue);
-          updateScore(score.scoreWord(word));
+          score.addPoints(word);
+          updateScore(score.getScore());
           words.use(word);
         } else {
           flashMessage("“" + word + "” not in word list.", Color.red);
@@ -294,7 +296,7 @@ class Boggle {
   }
 
   private void updateScore(int score) {
-    scoreboard.setText("Score: " + score);
+    scoreboard.setText("Score: " + score + " of " + maxScore);
   }
 
   private void newGame() {
@@ -340,14 +342,17 @@ class Boggle {
   private void resetDice(boolean enable) {
     var faces = dice.faces(Dice.MODERN);
     keyboard = new Keyboard(faces);
-    Solver s = new Solver(faces, words);
     if (enable) {
-      s.legalWords().forEach(w -> System.out.println(w));
+      maxScore = getMaxScore(faces);
     }
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(faces.get(i));
       letterButtons[i].setEnabled(enable);
       resetLetterButton(letterButtons[i]);
     }
+  }
+
+  private int getMaxScore(List<String> faces) {
+    return new Solver(faces, words).legalWords().mapToInt(w -> score.scoreWord(w)).sum();
   }
 }
