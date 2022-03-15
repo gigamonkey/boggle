@@ -44,20 +44,26 @@ class Keyboard {
   }
 
   /**
-   * The given text was choosen by clicking the die at Point p.
+   * The given text was choosen by clicking the die at Point p. Return
+   * false if it's not a legal press.
    */
-  public void letterPressed(Point p, String text) {
+  public boolean letterPressed(Point p, String text) {
     if (isPressPossible(p)) {
       currentPossibilities = updatedPossibilities(new Point[] { p });
       updateWord(text);
+      return true;
     } else {
-      boggle.illegalPress(p);
+      return false;
     }
   }
 
+  public boolean stillPossible() {
+    return !currentPossibilities.isEmpty();
+  }
+
   public void enter() {
-    if (!currentPossibilities.isEmpty()) {
-      this.boggle.submitWord(getWord());
+    if (stillPossible()) {
+      boggle.submitWord(getWord());
     } else {
       boggle.flashMessage("Can't make " + getWord(), Color.red);
     }

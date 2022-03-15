@@ -77,11 +77,13 @@ class Boggle {
     for (var possibility : currentPossibilities) {
       for (var i = 0; i < possibility.size(); i++) {
         var p = possibility.get(i);
+        var b = letterButtons[p.y * 4 + p.x];
         if (i == possibility.size() - 1) {
-          highlightLetterButton(letterButtons[p.y * 4 + p.x]);
+          b.setBackground(Color.gray);
         } else {
-          lowlightLetterButton(letterButtons[p.y * 4 + p.x]);
+          b.setBackground(Color.lightGray);
         }
+        b.setBorder(whiteline);
       }
     }
   }
@@ -90,27 +92,6 @@ class Boggle {
     for (var b : letterButtons) {
       resetLetterButton(b);
     }
-  }
-
-  public void illegalPress(Point p) {
-    var i = p.y * 4 + p.x;
-    var b = letterButtons[i];
-    var end = System.currentTimeMillis() + 200;
-    var start = b.getLocation();
-    Timer t = new Timer(
-      64,
-      e -> {
-        if (System.currentTimeMillis() < end) {
-          var s = b.getLocation().x >= start.x ? -1 : 1;
-          b.setLocation(start.x + (2 * s), start.y);
-        } else {
-          b.setLocation(start);
-          ((Timer) e.getSource()).stop();
-        }
-      }
-    );
-    t.setInitialDelay(0);
-    t.start();
   }
 
   public void flashMessage(String msg, Color color) {
@@ -231,7 +212,7 @@ class Boggle {
     for (var i = 0; i < 16; i++) {
       var p = new Point(i % 4, i / 4);
       var b = new JButton("");
-      b.addActionListener(e -> keyboard.letterPressed(p, b.getText()));
+      b.addActionListener(e -> buttonPressed(p, b.getText()));
       b.setEnabled(false);
       b.setOpaque(true);
       if (defaultBorder == null) {
@@ -242,6 +223,33 @@ class Boggle {
       letterButtons[i] = b;
     }
     return panel;
+  }
+
+  private void buttonPressed(Point p, String text) {
+    if (!keyboard.letterPressed(p, text)) {
+      illegalPress(p);
+    }
+  }
+
+  private void illegalPress(Point p) {
+    var i = p.y * 4 + p.x;
+    var b = letterButtons[i];
+    var end = System.currentTimeMillis() + 200;
+    var start = b.getLocation();
+    Timer t = new Timer(
+      64,
+      e -> {
+        if (System.currentTimeMillis() < end) {
+          var s = b.getLocation().x >= start.x ? -1 : 1;
+          b.setLocation(start.x + (2 * s), start.y);
+        } else {
+          b.setLocation(start);
+          ((Timer) e.getSource()).stop();
+        }
+      }
+    );
+    t.setInitialDelay(0);
+    t.start();
   }
 
   private Component submitButton() {
@@ -318,15 +326,5 @@ class Boggle {
       letterButtons[i].setEnabled(enable);
       resetLetterButton(letterButtons[i]);
     }
-  }
-
-  private void highlightLetterButton(JButton b) {
-    b.setBackground(Color.gray);
-    b.setBorder(whiteline);
-  }
-
-  private void lowlightLetterButton(JButton b) {
-    b.setBackground(Color.lightGray);
-    b.setBorder(whiteline);
   }
 }
