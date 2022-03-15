@@ -14,13 +14,13 @@ import java.util.stream.IntStream;
  */
 class Keyboard {
 
+  private final List<String> faces;
   private StringBuilder currentWord = new StringBuilder();
   private List<List<Point>> currentPossibilities = List.of(Collections.emptyList());
   private boolean afterQ = false;
-  private List<String> dice;
 
-  public void setDice(List<String> dice) {
-    this.dice = dice;
+  public Keyboard(List<String> faces) {
+    this.faces = faces;
   }
 
   /**
@@ -73,8 +73,8 @@ class Keyboard {
 
   private Point[] diceFor(String text) {
     return IntStream
-      .range(0, dice.size())
-      .filter(i -> dice.get(i).equalsIgnoreCase(text))
+      .range(0, faces.size())
+      .filter(i -> faces.get(i).equalsIgnoreCase(text))
       .mapToObj(i -> new Point(i % 4, i / 4))
       .toArray(Point[]::new);
   }

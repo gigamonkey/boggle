@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
@@ -51,7 +50,6 @@ class Boggle {
   private final Words words = new Words();
   private final Dice dice = new Dice();
   private final Timer clockTimer = new Timer(1000, e -> updateClock());
-  private final Keyboard keyboard = new Keyboard();
 
   private final JButton[] letterButtons = new JButton[16];
   private final JButton submit = new JButton("Submit");
@@ -59,8 +57,8 @@ class Boggle {
   private final JLabel scoreboard = new JLabel("Score: 0", SwingConstants.RIGHT);
   private final JLabel message = new JLabel("", SwingConstants.LEFT);
 
-  private List<String> currentFaces = Collections.emptyList();
   private long endOfGame = System.currentTimeMillis();
+  private Keyboard keyboard = null;
 
   Boggle() {
     clockTimer.setInitialDelay(0);
@@ -340,10 +338,14 @@ class Boggle {
   }
 
   private void resetDice(boolean enable) {
-    var labels = dice.faces(Dice.MODERN);
-    keyboard.setDice(labels);
+    var faces = dice.faces(Dice.MODERN);
+    keyboard = new Keyboard(faces);
+    Solver s = new Solver(faces, words);
+    if (enable) {
+      s.legalWords().forEach(w -> System.out.println(w));
+    }
     for (var i = 0; i < letterButtons.length; i++) {
-      letterButtons[i].setText(labels.get(i));
+      letterButtons[i].setText(faces.get(i));
       letterButtons[i].setEnabled(enable);
       resetLetterButton(letterButtons[i]);
     }
