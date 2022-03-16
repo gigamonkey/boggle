@@ -25,16 +25,15 @@ class Keyboard {
   }
 
   /**
-   * The given letter was typed (presumably on a keyboard). Figure out
-   * if it could possibly be entered via the current dice.
+   * The given letter was typed. Figure out if it could possibly be
+   * entered via the current dice.
    */
   public void letterTyped(String letter) {
     var text = letterToText(letter);
     if (text != null) {
       // Text is null when Q is typed. We will process the text once
       // we get the U.
-      currentPossibilities = updatedPossibilities(diceFor(text));
-      currentWord.append(text);
+      update(text, diceFor(text));
     }
   }
 
@@ -44,8 +43,7 @@ class Keyboard {
   public void letterPressed(Point p, String text) {
     // We could depend on the caller to check isPressPossible before calling us, perhaps.
     if (isPressPossible(p)) {
-      currentPossibilities = updatedPossibilities(new Point[] { p });
-      currentWord.append(text);
+      update(text, new Point[] { p });
     }
   }
 
@@ -70,6 +68,11 @@ class Keyboard {
 
   public List<List<Point>> getPossibilities() {
     return currentPossibilities;
+  }
+
+  private void update(String text, Point[] possibleNexts) {
+    currentPossibilities = updatedPossibilities(possibleNexts);
+    currentWord.append(text);
   }
 
   private Point[] diceFor(String text) {
