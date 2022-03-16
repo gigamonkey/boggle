@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.stream.IntStream;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -63,14 +62,6 @@ class Boggle {
 
   Boggle() {
     clockTimer.setInitialDelay(0);
-  }
-
-  public Point[] diceFor(String text) {
-    return IntStream
-      .range(0, letterButtons.length)
-      .filter(i -> letterButtons[i].getText().equalsIgnoreCase(text))
-      .mapToObj(i -> new Point(i % 4, i / 4))
-      .toArray(Point[]::new);
   }
 
   public void highlightButtons(List<List<Point>> currentPossibilities) {
@@ -291,7 +282,6 @@ class Boggle {
   private Component messageBox() {
     Dimension d = new Dimension(150, 20);
     message.setPreferredSize(d);
-    message.setForeground(Color.red);
     return message;
   }
 

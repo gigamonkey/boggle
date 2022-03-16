@@ -4,7 +4,8 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * Given a set of dice and a word list find all the words (and their score).
+ * Given a set of dice faces and a word list find all the words that
+ * can be made.
  */
 class Solver {
 
@@ -17,14 +18,19 @@ class Solver {
   }
 
   public Stream<String> legalWords() {
-    return words.words().filter(w -> w.length() > 0 && legal(w));
+    return words.all().filter(w -> w.length() >= 3 && legal(w));
   }
 
   private boolean legal(String word) {
     keyboard.resetWord();
     for (int i = 0; i < word.length(); i++) {
       keyboard.letterTyped(word.substring(i, i + 1));
+      // Check after every letter because most words will fail
+      // quickly and we want to bail.
+      if (!keyboard.stillPossible()) {
+        return false;
+      }
     }
-    return keyboard.stillPossible();
+    return true;
   }
 }

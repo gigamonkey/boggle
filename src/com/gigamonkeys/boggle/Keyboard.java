@@ -15,7 +15,8 @@ import java.util.stream.IntStream;
 class Keyboard {
 
   private final List<String> faces;
-  private StringBuilder currentWord = new StringBuilder();
+  private final StringBuilder currentWord = new StringBuilder();
+
   private List<List<Point>> currentPossibilities = List.of(Collections.emptyList());
   private boolean afterQ = false;
 
@@ -24,7 +25,7 @@ class Keyboard {
   }
 
   /**
-   * The given letter was typed (presumably on a keyoard). Figure out
+   * The given letter was typed (presumably on a keyboard). Figure out
    * if it could possibly be entered via the current dice.
    */
   public void letterTyped(String letter) {
@@ -49,7 +50,7 @@ class Keyboard {
   }
 
   public boolean isPressPossible(Point p) {
-    return currentPossibilities.stream().anyMatch(path -> ok(p, path));
+    return currentPossibilities.stream().anyMatch(path -> ok(path, p));
   }
 
   public boolean stillPossible() {
@@ -63,7 +64,7 @@ class Keyboard {
 
   public String getWord() {
     // This method is used for displaying the word being built so we
-    // include the Q before it has actually been processed.
+    // include a typed Q before it has actually been processed.
     return currentWord.toString().toLowerCase() + (afterQ ? "q" : "");
   }
 
@@ -82,7 +83,7 @@ class Keyboard {
   private List<List<Point>> updatedPossibilities(Point[] points) {
     return currentPossibilities
       .stream()
-      .flatMap(path -> Arrays.stream(points).filter(p -> ok(p, path)).map(p -> appending(path, p)))
+      .flatMap(path -> Arrays.stream(points).filter(p -> ok(path, p)).map(p -> appending(path, p)))
       .toList();
   }
 
@@ -108,12 +109,12 @@ class Keyboard {
     return newPath;
   }
 
-  private boolean ok(Point p, List<Point> path) {
-    return path.isEmpty() || legalMove(path, path.get(path.size() - 1), p);
+  private boolean ok(List<Point> path, Point p) {
+    return path.isEmpty() || (!path.contains(p) && adjacent(previous(path), p));
   }
 
-  private boolean legalMove(List<Point> path, Point previous, Point p) {
-    return !path.contains(p) && adjacent(previous, p);
+  private Point previous(List<Point> path) {
+    return path.get(path.size() - 1);
   }
 
   private boolean adjacent(Point p1, Point p2) {

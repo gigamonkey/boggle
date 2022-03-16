@@ -40,7 +40,7 @@ class Words {
     return usedWords.contains(word);
   }
 
-  public Stream<String> words() {
+  public Stream<String> all() {
     return words.stream();
   }
 
