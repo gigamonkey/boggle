@@ -28,10 +28,6 @@ import javax.swing.border.Border;
  */
 class Boggle {
 
-  public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> new Boggle().makeFrame());
-  }
-
   public static final int GAME_IN_MILLIS = 3 * 60 * 1000;
   public static final int FLASH_MILLIS = 2000;
 
@@ -60,45 +56,27 @@ class Boggle {
   private Keyboard keyboard = null;
   private int maxScore;
 
+  public static void main(String[] args) {
+    SwingUtilities.invokeLater(() -> new Boggle().makeFrame());
+  }
+
   Boggle() {
     clockTimer.setInitialDelay(0);
   }
 
-  public void highlightButtons(List<List<Point>> currentPossibilities) {
-    resetLetterButtons();
-    for (var possibility : currentPossibilities) {
-      for (var i = 0; i < possibility.size(); i++) {
-        var p = possibility.get(i);
-        var b = letterButtons[p.y * 4 + p.x];
-        if (i == possibility.size() - 1) {
-          b.setBackground(Color.gray);
-        } else {
-          b.setBackground(Color.lightGray);
-        }
-        b.setBorder(whiteline);
-      }
-    }
-  }
-
-  public void resetLetterButtons() {
-    for (var b : letterButtons) {
-      resetLetterButton(b);
-    }
-  }
-
-  public void flashMessage(String msg, Color color) {
+  private void flashMessage(String msg, Color color) {
     showMessage(msg, color);
     var t = new Timer(FLASH_MILLIS, e -> message.setText(""));
     t.setRepeats(false);
     t.start();
   }
 
-  public void showMessage(String msg, Color color) {
+  private void showMessage(String msg, Color color) {
     message.setForeground(color);
     message.setText(msg);
   }
 
-  public void submitWord(String word) {
+  private void submitWord(String word) {
     if (inGame()) {
       if (word.length() > 0) {
         if (words.alreadyUsed(word)) {
@@ -311,11 +289,6 @@ class Boggle {
     return System.currentTimeMillis() < endOfGame;
   }
 
-  private void resetLetterButton(JButton b) {
-    b.setBorder(defaultBorder);
-    b.setBackground(defaultButtonColor);
-  }
-
   private void startClock() {
     endOfGame = System.currentTimeMillis() + GAME_IN_MILLIS;
     clockTimer.restart();
@@ -331,14 +304,41 @@ class Boggle {
 
   private void resetDice(boolean enable) {
     var faces = dice.faces(Dice.MODERN);
+    resetLetterButtons();
+    relabelLetterButtons(faces, enable);
     keyboard = new Keyboard(faces);
     if (enable) {
       maxScore = getMaxScore(faces);
     }
+  }
+
+  private void resetLetterButtons() {
+    for (var b : letterButtons) {
+      b.setBorder(defaultBorder);
+      b.setBackground(defaultButtonColor);
+    }
+  }
+
+  private void relabelLetterButtons(List<String> faces, boolean enable) {
     for (var i = 0; i < letterButtons.length; i++) {
       letterButtons[i].setText(faces.get(i));
       letterButtons[i].setEnabled(enable);
-      resetLetterButton(letterButtons[i]);
+    }
+  }
+
+  private void highlightButtons(List<List<Point>> currentPossibilities) {
+    resetLetterButtons();
+    for (var possibility : currentPossibilities) {
+      for (var i = 0; i < possibility.size(); i++) {
+        var p = possibility.get(i);
+        var b = letterButtons[p.y * 4 + p.x];
+        if (i == possibility.size() - 1) {
+          b.setBackground(Color.gray);
+        } else {
+          b.setBackground(Color.lightGray);
+        }
+        b.setBorder(whiteline);
+      }
     }
   }
 
