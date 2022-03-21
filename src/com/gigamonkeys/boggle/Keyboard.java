@@ -26,14 +26,19 @@ class Keyboard {
 
   /**
    * The given letter was typed. Figure out if it could possibly be
-   * entered via the current dice.
+   * entered via the current dice. Implements a tiny state machine to
+   * deal with Qu face.
    */
   public void letterTyped(String letter) {
-    var text = letterToText(letter);
-    if (text != null) {
-      // Text is null when Q is typed. We will process the text once
-      // we get the U.
-      update(text, diceFor(text));
+    boolean isQ = letter.equalsIgnoreCase("q");
+    try {
+      if (afterQ && letter.equalsIgnoreCase("u")) {
+        update("qu", diceFor("qu"));
+      } else if (!isQ) {
+        update(letter, diceFor(letter));
+      }
+    } finally {
+      afterQ = isQ;
     }
   }
 
@@ -41,7 +46,8 @@ class Keyboard {
    * The given text was choosen by clicking the die at Point p.
    */
   public void letterPressed(Point p, String text) {
-    // We could depend on the caller to check isPressPossible before calling us, perhaps.
+    // We could depend on the caller to check isPressPossible before
+    // calling us, perhaps.
     if (isPressPossible(p)) {
       update(text, new Point[] { p });
     }
@@ -70,6 +76,9 @@ class Keyboard {
     return currentPossibilities;
   }
 
+  ////////////////////////////////////////////////////////////////////
+  // Internals
+
   private void update(String text, Point[] possibleNexts) {
     currentPossibilities = updatedPossibilities(possibleNexts);
     currentWord.append(text);
@@ -88,22 +97,6 @@ class Keyboard {
       .stream()
       .flatMap(path -> Arrays.stream(points).filter(p -> ok(path, p)).map(p -> appending(path, p)))
       .toList();
-  }
-
-  private String letterToText(String letter) {
-    // Tiny state machine to deal with Qu face.
-    boolean isQ = letter.equalsIgnoreCase("q");
-    try {
-      if (afterQ && letter.equalsIgnoreCase("u")) {
-        return "qu";
-      } else if (!isQ) {
-        return letter;
-      } else {
-        return null;
-      }
-    } finally {
-      afterQ = isQ;
-    }
   }
 
   private List<Point> appending(List<Point> path, Point p) {
