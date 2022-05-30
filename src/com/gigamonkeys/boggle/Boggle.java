@@ -199,6 +199,7 @@ class Boggle {
   private void buttonPressed(Point p, String text) {
     if (keyboard.isPressPossible(p)) {
       keyboard.letterPressed(p, text);
+      showCurrentWord();
     } else {
       illegalPress(p);
     }
@@ -206,6 +207,10 @@ class Boggle {
 
   private void letterTyped(String letter) {
     keyboard.letterTyped(letter);
+    showCurrentWord();
+  }
+
+  private void showCurrentWord() {
     highlightButtons(keyboard.getPossibilities());
     showMessage(keyboard.getWord(), Color.black);
   }
