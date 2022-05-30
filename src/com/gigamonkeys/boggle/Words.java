@@ -17,10 +17,12 @@ class Words {
   // https://raw.githubusercontent.com/benhoyt/boggle/master/word-list.txt
   // https://www.wordgamedictionary.com/twl06/download/twl06.txt
   // https://www.luke-g.com/boggle/
+  private static final String WORDS = "word-list.txt";
+
   private static final Set<String> words;
 
   static {
-    var resource = Boggle.class.getResourceAsStream("word-list.txt");
+    var resource = Boggle.class.getResourceAsStream(WORDS);
     var r = new BufferedReader(new InputStreamReader(resource));
     words = r.lines().map(w -> w.toLowerCase()).collect(Collectors.toCollection(HashSet::new));
     System.out.println(words.size() + " words loaded.");
